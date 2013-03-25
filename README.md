@@ -8,7 +8,7 @@ environment if it does not exist, or manage an existing environment.
 Sample usage (assuming environment does not yet exist):
 
 ```python
->>> from virtualenv.api import VirtualEnvironment
+>>> from virtualenv.manage import VirtualEnvironment
 >>> env = VirtualEnvironment('/path/to/environment/name')
 >>> env.is_installed('mezzanine')
 False
@@ -24,7 +24,7 @@ and `django` into it. The API can transparently work with both new and existing
 environments, like so (assuming above code is run first):
 
 ```python
->>> from virtualenv.api import VirtualEnvironment
+>>> from virtualenv.manage import VirtualEnvironment
 >>> env = VirtualEnvironment('/path/to/environment/name')
 >>> env.is_installed('mezzanine')
 True
