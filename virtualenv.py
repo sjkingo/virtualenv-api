@@ -69,28 +69,28 @@ class VirtualEnvironment(object):
             self._create()
         self._ready = True
 
-    def install(self, application, force=False):
-        """Installs the given application (given in pip's package syntax) 
+    def install(self, package, force=False):
+        """Installs the given package (given in pip's package syntax) 
         into this virtual environment only if it is not already installed.
         If `force` is True, force an installation."""
-        if not force and self.is_installed(application):
-            self._write_to_log('%s is already installed, skipping (use force=True to override)' % application)
+        if not force and self.is_installed(package):
+            self._write_to_log('%s is already installed, skipping (use force=True to override)' % package)
             return
-        out = self._execute([self._pip_rpath, 'install', application])
+        out = self._execute([self._pip_rpath, 'install', package])
         self._write_to_log(out)
 
-    def is_installed(self, application):
-        """Returns True if the given application (given in pip's package syntax)
+    def is_installed(self, package):
+        """Returns True if the given package (given in pip's package syntax)
         is installed in the virtual environment."""
         installed_packages = self._execute([self._pip_rpath, 'freeze']).lower()
-        pkg_name = application.lower().split('=')[0]
+        pkg_name = package.lower().split('=')[0]
         if pkg_name.endswith('.git'):
             pkg_name = os.path.split(pkg_name)[1][:-4]
         m = re.search(pkg_name, installed_packages)
         return True if m is not None else False
 
-    def upgrade(self, application):
-        """Shortcut method to upgrade an application by forcing a reinstall.
+    def upgrade(self, package):
+        """Shortcut method to upgrade a package by forcing a reinstall.
         Note that this may not actually upgrade but merely reinstall if there
         is no newer version to install."""
-        self.install(application, force=True)
+        self.install(package, force=True)
