@@ -1,35 +1,57 @@
-virtualenv-api - an API for virtualenv/pip
-==========================================
+virtualenv-api - an API for virtualenv
+======================================
 
-This API can be used to programatically manage [virtual environments](http://www.virtualenv.org/en/latest/#what-it-does).
-Instantiating the `VirtualEnvironment` class with a path will either create the
-environment if it does not exist, or manage an existing environment.
+[virtualenv](http://www.virtualenv.org/) is a tool to create isolated Python
+environments.  Unfortunately, it does not expose a native Python API. This
+package aims to provide an API in the form of a wrapper around virtualenv.
 
-Sample usage (assuming environment does not yet exist):
+It can be used to create and delete environments and perform package management
+inside the environment.
+
+Examples
+--------
+
+* To begin managing an environment (it will be created if it does not exist):
 
 ```python
->>> from virtualenv.manage import VirtualEnvironment
->>> env = VirtualEnvironment('/path/to/environment/name')
+from virtualenv.manage import VirtualEnvironment
+env = VirtualEnvironment('/path/to/environment/name')
+```
+
+* Check if the `mezzanine` package is installed:
+
+```python
 >>> env.is_installed('mezzanine')
 False
->>> env.install('mezzanine')
->>> env.is_installed('mezzanine')
-True
->>> env.install('django==1.4')
->>> env.upgrade('django')
 ```
 
-The above code has created a new virtual environment and installed `mezzanine`
-and `django` into it. The API can transparently work with both new and existing
-environments, like so (assuming above code is run first):
+* Install the latest version of the `mezzanine` package:
 
 ```python
->>> from virtualenv.manage import VirtualEnvironment
->>> env = VirtualEnvironment('/path/to/environment/name')
->>> env.is_installed('mezzanine')
-True
->>> env.is_installed('django')
-True
+>>> env.install('mezzanine')
 ```
 
-A more exhaustive example is available in `example.py`.
+* Install version 1.4 of the `django` package (this is pip's syntax):
+
+```python
+env.install('django==1.4')
+```
+
+* Upgrade the `django` package to the latest version:
+
+```python
+env.upgrade('django')
+```
+
+* Instances of the environment provide an `installed\_packages` property:
+
+```python
+>>> env.installed_packages
+[('django', '1.5'), ('wsgiref', '0.1.2')]
+```
+
+* A list of package names is also available in the same manner:
+
+```python
+>>> env.installed_package_names
+['django', 'wsgiref']
