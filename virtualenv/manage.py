@@ -3,6 +3,8 @@ import os.path
 import re
 import subprocess
 
+from virtualenv.util import split_package_name
+
 class VirtualEnvironment(object):
     # True if the virtual environment has been set up through open_or_create()
     _ready = False
@@ -82,12 +84,14 @@ class VirtualEnvironment(object):
     def is_installed(self, package):
         """Returns True if the given package (given in pip's package syntax)
         is installed in the virtual environment."""
-        installed_packages = self._execute([self._pip_rpath, 'freeze']).lower()
-        pkg_name = package.lower().split('=')[0]
-        if pkg_name.endswith('.git'):
-            pkg_name = os.path.split(pkg_name)[1][:-4]
-        m = re.search(pkg_name, installed_packages)
-        return True if m is not None else False
+        if package.endswith('.git'):
+            pkg_name = os.path.split(package)[1][:-4]
+            return pkg_name in self.installed_package_names
+        pkg_tuple = split_package_name(package)
+        if pkg_tuple[1] is not None:
+            return pkg_tuple in self.installed_packages
+        else:
+            return pkg_tuple[0] in self.installed_package_names
 
     def upgrade(self, package):
         """Shortcut method to upgrade a package by forcing a reinstall.
@@ -102,7 +106,12 @@ class VirtualEnvironment(object):
         l = self._execute([self._pip_rpath, 'freeze']).split(linesep)
         for p in l:
             if p == '': continue
-            name = p.split('==')[0]
+            name = p.split('==')[0].lower()
             ver = p.split('==')[1]
             pkgs.append((name, ver))
         return pkgs
+
+    @property
+    def installed_package_names(self):
+        """List of all package names that are installed in this environment."""
+        return [name.lower() for name, _ in self.installed_packages]
