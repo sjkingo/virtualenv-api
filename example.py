@@ -2,12 +2,15 @@
 
 from virtualenv.manage import VirtualEnvironment
 
-def sample_usage():
-    env = VirtualEnvironment('/tmp/virtualenv.test')
+def example(path='/tmp/virtualenv.test'):
+    env = VirtualEnvironment(path)
+
+    print 'django 1.5 installed?', env.is_installed('django==1.5')
+
     print 'mezzanine installed?', env.is_installed('mezzanine')
     env.install('mezzanine')
     print 'mezzanine installed?', env.is_installed('mezzanine')
-    print 'django 1.5 installed?', env.is_installed('django==1.5')
+
     print env.installed_packages
 
     payments_repo = 'git+git://github.com/explodes/cartridge-payments.git'
@@ -18,4 +21,4 @@ def sample_usage():
 
 
 if __name__ == '__main__':
-    sample_usage()
+    example()

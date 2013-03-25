@@ -31,3 +31,5 @@ True
 >>> env.is_installed('django')
 True
 ```
+
+A more exhaustive example is available in `example.py`.
