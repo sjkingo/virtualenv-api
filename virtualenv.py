@@ -3,20 +3,6 @@ import os.path
 import re
 import subprocess
 
-"""API for virtualenv/pip.
-Can be used to programatically manage virtual environments such as deployed applications etc.
-
-Sample usage (assuming environment does not yet exist):
-
-    >>> env = VirtualEnvironment('/path/to/environment/name')
-    >>> env.is_installed('mezzanine')
-    False
-    >>> env.install('mezzanine')
-    >>> env.is_installed('mezzanine')
-    True
-    >>> env.install('django==1.5')
-"""
-
 class VirtualEnvironment(object):
     # True if the virtual environment has been set up through open_or_create()
     _ready = False
