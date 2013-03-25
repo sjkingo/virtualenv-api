@@ -4,10 +4,10 @@ from virtualenv.manage import VirtualEnvironment
 
 def sample_usage():
     env = VirtualEnvironment('/tmp/virtualenv.test')
-    print env.is_installed('mezzanine')
+    print 'mezzanine installed?', env.is_installed('mezzanine')
     env.install('mezzanine')
-    print env.is_installed('mezzanine')
-    print env.is_installed('django')
+    print 'mezzanine installed?', env.is_installed('mezzanine')
+    print 'django installed?', env.is_installed('django')
 
 
 if __name__ == '__main__':
