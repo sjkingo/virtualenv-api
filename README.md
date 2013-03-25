@@ -6,6 +6,7 @@ This API can be used to programatically manage virtual environments such as depl
 Sample usage (assuming environment does not yet exist):
 
 ```python
+>>> from virtualenv import VirtualEnvironment
 >>> env = VirtualEnvironment('/path/to/environment/name')
 >>> env.is_installed('mezzanine')
 False
