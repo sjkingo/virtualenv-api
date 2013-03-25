@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from virtualenv import VirtualEnvironment
+from virtualenv.api import VirtualEnvironment
 
 def sample_usage():
     env = VirtualEnvironment('/tmp/virtualenv.test')
