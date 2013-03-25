@@ -13,5 +13,6 @@ False
 >>> env.install('mezzanine')
 >>> env.is_installed('mezzanine')
 True
->>> env.install('django==1.5')
+>>> env.install('django==1.4')
+>>> env.upgrade('django')
 ```

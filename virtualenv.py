@@ -88,3 +88,9 @@ class VirtualEnvironment(object):
             pkg_name = os.path.split(pkg_name)[1][:-4]
         m = re.search(pkg_name, installed_packages)
         return True if m is not None else False
+
+    def upgrade(self, application):
+        """Shortcut method to upgrade an application by forcing a reinstall.
+        Note that this may not actually upgrade but merely reinstall if there
+        is no newer version to install."""
+        self.install(application, force=True)
