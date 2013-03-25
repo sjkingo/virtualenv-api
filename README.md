@@ -34,13 +34,13 @@ False
 * Install version 1.4 of the `django` package (this is pip's syntax):
 
 ```python
-env.install('django==1.4')
+>>> env.install('django==1.4')
 ```
 
 * Upgrade the `django` package to the latest version:
 
 ```python
-env.upgrade('django')
+>>> env.upgrade('django')
 ```
 
 * Instances of the environment provide an `installed\_packages` property:
