@@ -67,6 +67,7 @@ False
 ```python
 >>> env.installed_package_names
 ['django', 'wsgiref']
+```
 
 Verbose output from each command is available in the environment's `build.log`
 file, which is appended to with each operation.
