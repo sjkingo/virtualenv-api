@@ -106,9 +106,7 @@ class VirtualEnvironment(object):
         l = self._execute([self._pip_rpath, 'freeze']).split(linesep)
         for p in l:
             if p == '': continue
-            name = p.split('==')[0].lower()
-            ver = p.split('==')[1]
-            pkgs.append((name, ver))
+            pkgs.append(split_package_name(p))
         return pkgs
 
     @property
