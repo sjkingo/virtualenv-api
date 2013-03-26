@@ -47,7 +47,14 @@ class VirtualEnvironment(object):
         """Executes the given command inside the environment and returns the output."""
         if not self._ready:
             self.open_or_create()
-        return subprocess.check_output(args, cwd=self.path)
+        try:
+            return subprocess.check_output(args, cwd=self.path)
+        except OSError, e:
+            # raise a more meaningful error with the program name
+            prog = args[0]
+            if prog[0] != os.sep:
+                prog = os.path.join(self.path, prog)
+            raise OSError('%s: %s' % (prog, str(e)))
 
     def _write_to_log(self, s, truncate=False):
         """Writes the given output to the log file, appending unless `truncate` is True."""
