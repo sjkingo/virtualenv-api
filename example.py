@@ -13,7 +13,7 @@ def example(path='/tmp/virtualenv.test'):
 
     print env.installed_packages
 
-    payments_repo = 'git+git://github.com/explodes/cartridge-payments.git'
+    payments_repo = 'git+git://github.com/sjkingo/cartridge-payments.git'
     print 'cartridge-payments installed?', env.is_installed(payments_repo)
     env.install(payments_repo)
     print 'cartridge-payments installed?', env.is_installed(payments_repo)

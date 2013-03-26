@@ -49,6 +49,12 @@ False
 >>> env.uninstall('mezzanine')
 ```
 
+* A package may be installed directly from a git repository (must end with `.git`):
+
+```python
+>>> env.install('git+git://github.com/sjkingo/cartridge-payments.git')
+```
+
 * Instances of the environment provide an `installed\_packages` property:
 
 ```python
