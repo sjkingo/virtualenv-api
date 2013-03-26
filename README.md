@@ -55,7 +55,7 @@ False
 >>> env.install('git+git://github.com/sjkingo/cartridge-payments.git')
 ```
 
-* Instances of the environment provide an `installed\_packages` property:
+* Instances of the environment provide an `installed_packages` property:
 
 ```python
 >>> env.installed_packages
