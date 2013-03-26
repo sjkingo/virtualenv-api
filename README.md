@@ -43,6 +43,12 @@ False
 >>> env.upgrade('django')
 ```
 
+* Uninstall the `mezzanine` package:
+
+```python
+>>> env.uninstall('mezzanine')
+```
+
 * Instances of the environment provide an `installed\_packages` property:
 
 ```python

@@ -19,6 +19,10 @@ def example(path='/tmp/virtualenv.test'):
     print 'cartridge-payments installed?', env.is_installed(payments_repo)
     print env.installed_packages
 
+    env.uninstall('mezzanine')
+    print 'mezzanine installed?', env.is_installed('mezzanine')
+    print env.installed_packages
+
 
 if __name__ == '__main__':
     example()

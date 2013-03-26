@@ -81,6 +81,15 @@ class VirtualEnvironment(object):
         out = self._execute([self._pip_rpath, 'install', package])
         self._write_to_log(out)
 
+    def uninstall(self, package):
+        """Uninstalls the given package (given in pip's package syntax) from
+        this virtual environment."""
+        if not self.is_installed(package):
+            self._write_to_log('%s is not installed, skipping')
+            return
+        out = self._execute([self._pip_rpath, 'uninstall', '-y', package])
+        self._write_to_log(out)
+
     def is_installed(self, package):
         """Returns True if the given package (given in pip's package syntax)
         is installed in the virtual environment."""
