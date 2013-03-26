@@ -112,7 +112,7 @@ class VirtualEnvironment(object):
     def installed_packages(self):
         """List of all packages that are installed in this environment."""
         pkgs = [] #: [(name, ver), ..]
-        l = self._execute([self._pip_rpath, 'freeze']).split(linesep)
+        l = self._execute([self._pip_rpath, 'freeze', '-l']).split(linesep)
         for p in l:
             if p == '': continue
             pkgs.append(split_package_name(p))
