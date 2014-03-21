@@ -15,7 +15,7 @@ class VirtualEnvironment(object):
             path = path[:-1]
         self.path = path
         self.env = environ.copy()
-        if cache:
+        if cache is not None:
             self.env["PIP_DOWNLOAD_CACHE"] = os.path.expanduser(os.path.expandvars(cache))
 
     def __str__(self):
@@ -122,10 +122,9 @@ class VirtualEnvironment(object):
             return pkg_tuple[0] in self.installed_package_names
 
     def upgrade(self, package, force=False):
-        """Shortcut method to upgrade a package by forcing a reinstall.
-        If `force` is set to True, the package and all of its
-        dependencies will be reinstalled, otherwise if the package is
-        up to date, this command is a no-op."""
+        """Shortcut method to upgrade a package. If `force` is set to True,
+        the package and all of its dependencies will be reinstalled, otherwise
+        if the package is up to date, this command is a no-op."""
         self.install(package, upgrade=True, force=force)
 
     @property
