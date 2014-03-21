@@ -1,4 +1,4 @@
-from os import linesep
+from os import linesep, environ
 import os.path
 import re
 import subprocess
@@ -9,11 +9,14 @@ class VirtualEnvironment(object):
     # True if the virtual environment has been set up through open_or_create()
     _ready = False
 
-    def __init__(self, path):
+    def __init__(self, path, cache=None):
         # remove trailing slash so os.path.split() behaves correctly
         if path[-1] == '/':
             path = path[:-1]
         self.path = path
+        self.env = environ.copy()
+        if cache:
+            self.env["PIP_DOWNLOAD_CACHE"] = os.path.expanduser(os.path.expandvars(cache))
 
     def __str__(self):
         return self.path
@@ -48,7 +51,7 @@ class VirtualEnvironment(object):
         if not self._ready:
             self.open_or_create()
         try:
-            return subprocess.check_output(args, cwd=self.path)
+            return subprocess.check_output(args, cwd=self.path, env=self.env)
         except OSError, e:
             # raise a more meaningful error with the program name
             prog = args[0]
@@ -78,14 +81,23 @@ class VirtualEnvironment(object):
             self._create()
         self._ready = True
 
-    def install(self, package, force=False):
+    def install(self, package, force=False, upgrade=False):
         """Installs the given package (given in pip's package syntax) 
         into this virtual environment only if it is not already installed.
-        If `force` is True, force an installation."""
-        if not force and self.is_installed(package):
+        If `force` is True, force an installation. If `upgrade` is True,
+        attempt to upgrade the package in question. If both `force` and
+        `upgrade` are True, reinstall the package and its dependencies."""
+        if not (force or upgrade) and self.is_installed(package):
             self._write_to_log('%s is already installed, skipping (use force=True to override)' % package)
             return
-        out = self._execute([self._pip_rpath, 'install', package])
+        options = []
+        if upgrade:
+            options += ["--upgrade"]
+            if force:
+                options += ["--force-reinstall"]
+        elif force:
+            options += ["--ignore-installed"]
+        out = self._execute([self._pip_rpath, 'install', package] + options)
         self._write_to_log(out)
 
     def uninstall(self, package):
@@ -109,11 +121,12 @@ class VirtualEnvironment(object):
         else:
             return pkg_tuple[0] in self.installed_package_names
 
-    def upgrade(self, package):
+    def upgrade(self, package, force=False):
         """Shortcut method to upgrade a package by forcing a reinstall.
-        Note that this may not actually upgrade but merely reinstall if there
-        is no newer version to install."""
-        self.install(package, force=True)
+        If `force` is set to True, the package and all of its
+        dependencies will be reinstalled, otherwise if the package is
+        up to date, this command is a no-op."""
+        self.install(package, upgrade=True, force=force)
 
     @property
     def installed_packages(self):
