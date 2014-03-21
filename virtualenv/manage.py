@@ -97,8 +97,12 @@ class VirtualEnvironment(object):
                 options += ["--force-reinstall"]
         elif force:
             options += ["--ignore-installed"]
-        out = self._execute([self._pip_rpath, 'install', package] + options)
-        self._write_to_log(out)
+        try:
+            out = self._execute([self._pip_rpath, 'install', package] + options)
+            self._write_to_log(out)
+        except subprocess.CalledProcessError as e:
+            self._write_to_log(e.output)
+            raise EnvironmentError((e.returncode, e.output, package))
 
     def uninstall(self, package):
         """Uninstalls the given package (given in pip's package syntax) from
