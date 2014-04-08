@@ -63,7 +63,7 @@ class VirtualEnvironment(object):
             if out is not None:
                 self._write_to_log(out, truncate=True)  # new log
 
-    def _execute(self, args):
+    def _execute(self, args, log=True):
         """Executes the given command inside the environment and returns the output."""
         out = None
         if not self._ready:
@@ -81,7 +81,7 @@ class VirtualEnvironment(object):
             out = e.output
             raise e
         finally:
-            if out is not None:
+            if log and out is not None:
                 self._write_to_log(out)
 
     def _write_to_log(self, s, truncate=False):
@@ -152,6 +152,15 @@ class VirtualEnvironment(object):
         the package and all of its dependencies will be reinstalled, otherwise
         if the package is up to date, this command is a no-op."""
         self.install(package, upgrade=True, force=force)
+
+    def _search(self, term):
+        results = self._execute([self._pip_rpath, 'search', term])
+        for result in results.split("\n"):
+            name, description = result.split(" - ", 1)
+            yield name.strip(), description.strip()
+
+    def search(self, term):
+        return list(self._search(term))
 
     @property
     def installed_packages(self):
