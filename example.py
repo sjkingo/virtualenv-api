@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from virtualenv.manage import VirtualEnvironment
+from virtualenvapi.manage import VirtualEnvironment
 
 def example(path='/tmp/virtualenv.test'):
     env = VirtualEnvironment(path)
@@ -22,6 +22,11 @@ def example(path='/tmp/virtualenv.test'):
     env.uninstall('mezzanine')
     print 'mezzanine installed?', env.is_installed('mezzanine')
     print env.installed_packages
+
+    pkgs = env.search('requests')
+    print 'search for \'requests\':'
+    print len(pkgs), 'found:'
+    print pkgs
 
 
 if __name__ == '__main__':
