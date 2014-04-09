@@ -69,5 +69,12 @@ False
 ['django', 'wsgiref']
 ```
 
+* Search for a package on PyPI:
+
+```python
+>>> env.search('requests')[0]
+('requests', 'Python HTTP for Humans.')
+```
+
 Verbose output from each command is available in the environment's `build.log`
-file, which is appended to with each operation.
+file, which is appended to with each operation. Any errors are logged to `build.err`.
