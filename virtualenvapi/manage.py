@@ -79,8 +79,11 @@ class VirtualEnvironment(object):
             raise e
         finally:
             if log:
-                self._write_to_log(output)
-                self._write_to_error(error)
+                try:
+                    self._write_to_log(output)
+                    self._write_to_error(error)
+                except NameError:
+                    pass  # We tried
 
     def _write_to_log(self, s, truncate=False):
         """Writes the given output to the log file, appending unless `truncate` is True."""
