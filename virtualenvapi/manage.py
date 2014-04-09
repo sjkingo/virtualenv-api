@@ -163,7 +163,7 @@ class VirtualEnvironment(object):
 
     def search(self, term):
         packages = []
-        results = self._execute([self._pip_rpath, 'search', term])
+        results = self._execute([self._pip_rpath, 'search', term], log=False)  # Don't want to log searches
         for result in results.split("\n"):
             try:
                 name, description = result.split(" - ", 1)
