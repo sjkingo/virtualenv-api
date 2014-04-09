@@ -66,7 +66,7 @@ class VirtualEnvironment(object):
             output, error = proc.communicate()
             returncode = proc.returncode
             if returncode:
-                raise subprocess.CalledProcessError(returncode, proc, output)
+                raise subprocess.CalledProcessError(returncode, proc, (output, error))
             return output
         except OSError as e:
             # raise a more meaningful error with the program name
@@ -76,6 +76,7 @@ class VirtualEnvironment(object):
             raise OSError('%s: %s' % (prog, str(e)))
         except subprocess.CalledProcessError as e:
             output, error = e.output
+            e.output = output
             raise e
         finally:
             if log:
