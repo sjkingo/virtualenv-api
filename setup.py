@@ -9,7 +9,4 @@ setup(
     description='An API for virtualenv/pip',
     url='https://github.com/sjkingo/virtualenv-api',
     packages=find_packages(),
-    install_requires=[
-        'virtualenv >= 1.11',
-    ]
 )
