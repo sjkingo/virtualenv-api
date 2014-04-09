@@ -190,8 +190,3 @@ class VirtualEnvironment(object):
     def installed_package_names(self):
         """List of all package names that are installed in this environment."""
         return [name.lower() for name, _ in self.installed_packages]
-
-
-if __name__ == "__main__":
-    venv = VirtualEnvironment("/tmp/1")
-    print venv.search("foo")
