@@ -1,9 +1,10 @@
 from os import linesep, environ
 import os.path
-import re
 import subprocess
 
-from virtualenv.util import split_package_name
+from virtualenvapi.util import split_package_name
+from virtualenvapi.exceptions import VirtualenvCreationException, PackageInstallationException, PackageRemovalException
+
 
 class VirtualEnvironment(object):
     # True if the virtual environment has been set up through open_or_create()
@@ -41,31 +42,60 @@ class VirtualEnvironment(object):
         """Absolute path of the log file for recording installation output."""
         return os.path.join(self.path, 'build.log')
 
+    @property
+    def _errorfile(self):
+        """Absolute path of the log file for recording installation errors."""
+        return os.path.join(self.path, 'build.err')
+
     def _create(self):
         """Executes `virtualenv` to create a new environment."""
-        out = subprocess.check_output(['virtualenv', self.name], cwd=self.root)
-        self._write_to_log(out, truncate=True) # new log
+        proc = subprocess.Popen(['virtualenv', self.name], cwd=self.root, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output, error = proc.communicate()
+        returncode = proc.returncode
+        if returncode:
+            raise VirtualenvCreationException((returncode, output, self.name))
+        self._write_to_log(output, truncate=True)
+        self._write_to_error(error, truncate=True)
 
-    def _execute(self, args):
+    def _execute(self, args, log=True):
         """Executes the given command inside the environment and returns the output."""
         if not self._ready:
             self.open_or_create()
         try:
-            return subprocess.check_output(args, cwd=self.path, env=self.env)
-        except OSError, e:
+            proc = subprocess.Popen(args, cwd=self.path, env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            output, error = proc.communicate()
+            returncode = proc.returncode
+            if returncode:
+                raise subprocess.CalledProcessError(returncode, proc, (output, error))
+            return output
+        except OSError as e:
             # raise a more meaningful error with the program name
             prog = args[0]
             if prog[0] != os.sep:
                 prog = os.path.join(self.path, prog)
             raise OSError('%s: %s' % (prog, str(e)))
+        except subprocess.CalledProcessError as e:
+            output, error = e.output
+            e.output = output
+            raise e
+        finally:
+            if log:
+                try:
+                    self._write_to_log(output)
+                    self._write_to_error(error)
+                except NameError:
+                    pass  # We tried
 
     def _write_to_log(self, s, truncate=False):
         """Writes the given output to the log file, appending unless `truncate` is True."""
         # if truncate is True, set write mode to truncate
-        choice = { True: 'w',
-                   False: 'a'
-                 }
-        with open(self._logfile, choice[truncate]) as fp:
+        with open(self._logfile, 'w' if truncate else 'a') as fp:
+            fp.write(s + linesep)
+
+    def _write_to_error(self, s, truncate=False):
+        """Writes the given output to the error file, appending unless `truncate` is True."""
+        # if truncate is True, set write mode to truncate
+        with open(self._errorfile, 'w' if truncate else 'a') as fp:
             fp.write(s + linesep)
 
     def _pip_exists(self):
@@ -98,11 +128,9 @@ class VirtualEnvironment(object):
         elif force:
             options += ['--ignore-installed']
         try:
-            out = self._execute([self._pip_rpath, 'install', package] + options)
-            self._write_to_log(out)
+            self._execute([self._pip_rpath, 'install', package] + options)
         except subprocess.CalledProcessError as e:
-            self._write_to_log(e.output)
-            raise EnvironmentError((e.returncode, e.output, package))
+            raise PackageInstallationException((e.returncode, e.output, package))
 
     def uninstall(self, package):
         """Uninstalls the given package (given in pip's package syntax) from
@@ -110,8 +138,10 @@ class VirtualEnvironment(object):
         if not self.is_installed(package):
             self._write_to_log('%s is not installed, skipping')
             return
-        out = self._execute([self._pip_rpath, 'uninstall', '-y', package])
-        self._write_to_log(out)
+        try:
+            self._execute([self._pip_rpath, 'uninstall', '-y', package])
+        except subprocess.CalledProcessError as e:
+            raise PackageRemovalException((e.returncode, e.output, package))
 
     def is_installed(self, package):
         """Returns True if the given package (given in pip's package syntax)
@@ -130,6 +160,21 @@ class VirtualEnvironment(object):
         the package and all of its dependencies will be reinstalled, otherwise
         if the package is up to date, this command is a no-op."""
         self.install(package, upgrade=True, force=force)
+
+    def search(self, term):
+        packages = []
+        results = self._execute([self._pip_rpath, 'search', term], log=False)  # Don't want to log searches
+        for result in results.split('\n'):
+            try:
+                name, description = result.split(' - ', 1)
+                packages.append((name.strip(), description.strip()))
+            except ValueError:
+                name, description = packages[-1]
+                packages[-1] = (name, description + ' ' + result.strip())
+        return packages
+
+    def search_names(self, term):
+        return [name for name, description in self.search(term)]
 
     @property
     def installed_packages(self):

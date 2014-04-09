@@ -14,7 +14,7 @@ Examples
 * To begin managing an environment (it will be created if it does not exist):
 
 ```python
-from virtualenv.manage import VirtualEnvironment
+from virtualenvapi.manage import VirtualEnvironment
 env = VirtualEnvironment('/path/to/environment/name')
 ```
 
