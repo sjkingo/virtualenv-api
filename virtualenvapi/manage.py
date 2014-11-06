@@ -100,7 +100,7 @@ class VirtualEnvironment(object):
 
     def _pip_exists(self):
         """Returns True if pip exists inside the virtual environment. Can be
-        used as a naive way to verify that the envrionment is installed."""
+        used as a naive way to verify that the environment is installed."""
         return os.path.isfile(os.path.join(self.path, self._pip_rpath))
 
     def open_or_create(self):
@@ -111,16 +111,19 @@ class VirtualEnvironment(object):
             self._create()
         self._ready = True
 
-    def install(self, package, force=False, upgrade=False):
+    def install(self, package, force=False, upgrade=False, options=[]):
         """Installs the given package (given in pip's package syntax) 
         into this virtual environment only if it is not already installed.
         If `force` is True, force an installation. If `upgrade` is True,
         attempt to upgrade the package in question. If both `force` and
-        `upgrade` are True, reinstall the package and its dependencies."""
+        `upgrade` are True, reinstall the package and its dependencies.
+        The `options` is a list of strings that can be used to pass to
+        pip."""
         if not (force or upgrade) and self.is_installed(package):
             self._write_to_log('%s is already installed, skipping (use force=True to override)' % package)
             return
-        options = []
+        if not isinstance(options, list):
+            raise ValueError("Options must be a list of strings.")
         if upgrade:
             options += ['--upgrade']
             if force:
@@ -179,10 +182,11 @@ class VirtualEnvironment(object):
     @property
     def installed_packages(self):
         """List of all packages that are installed in this environment."""
-        pkgs = [] #: [(name, ver), ..]
+        pkgs = []  #: [(name, ver), ..]
         l = self._execute([self._pip_rpath, 'freeze', '-l']).split(linesep)
         for p in l:
-            if p == '': continue
+            if p == '':
+                continue
             pkgs.append(split_package_name(p))
         return pkgs
 
