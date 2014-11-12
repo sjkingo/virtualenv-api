@@ -220,7 +220,7 @@ class VirtualEnvironment(object):
             freeze.append(n)
             """
         #return [n for n in self._execute([self._pip_rpath, 'freeze', '-l']).split(linesep) if not n is '' and not n[0] is '#']
-        return [self._execute([self._pip_rpath, 'freeze', '-l']).split(linesep)]
+        return [n for n in self._execute([self._pip_rpath, 'freeze', '-l']).split(linesep) if not n is '']
 
     @property
     def installed_package_names(self):
