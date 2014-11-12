@@ -158,7 +158,7 @@ class VirtualEnvironment(object):
         if isinstance(package, list):
             dict_installed = {}
             for n in package:
-                dict_installed[n]=self.is_installed(n)
+                dict_installed[n] = self.is_installed(n)
             return False not in dict_installed.values()
 
         elif isinstance(package, str):
@@ -171,9 +171,9 @@ class VirtualEnvironment(object):
             else:
                 return pkg_tuple[0] in self.installed_package_names
         elif isinstance(package, tuple):
-            package=tuple(n.lower() for n in list(package))
+            package = tuple(n.lower() for n in list(package))
             return package in self.installed_packages
-        
+
         """
         elif isinstance(package, list):
             dict_installed = {}
