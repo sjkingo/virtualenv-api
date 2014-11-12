@@ -163,11 +163,13 @@ class VirtualEnvironment(object):
         """Returns True if the given package (given in pip's package syntax)
         is installed in the virtual environment."""
         if isinstance(package, list):
-            dict_installed = {}
             for n in package:
-                dict_installed[n] = self.is_installed(n)
-            return False not in dict_installed.values()
-
+                if not self.is_installed(n):
+                    return False
+            return True
+        if isinstance(package, tuple):
+            package='=='.join(package)
+        package=package.lower()
         elif isinstance(package, str):
             if package.endswith('.git'):
                 pkg_name = os.path.split(package)[1][:-4]
@@ -180,31 +182,6 @@ class VirtualEnvironment(object):
         elif isinstance(package, tuple):
             package = tuple(n.lower() for n in list(package))
             return package in self.installed_packages
-
-        """
-        elif isinstance(package, list):
-            dict_installed = {}
-            packages = package
-            for package in packages:
-                if isinstance(package, str):
-                    if package.endswith('.git'):
-                        pkg_name = os.path.split(package)[1][:-4]
-                        #return pkg_name in self.installed_package_names
-                        dict_installed[package] = pkg_name in self.installed_package_names
-                    pkg_tuple = split_package_name(package)
-                    if pkg_tuple[1] is not None:
-                        #return pkg_tuple in self.installed_packages
-                        dict_installed[package] = pkg_tuple in self.installed_packages
-                    else:
-                        #return pkg_tuple[0] in self.installed_package_names
-                        dict_installed[package] = pkg_tuple[0] in self.installed_package_names
-                if isinstance(package, tuple):
-                    compare = [(n.lower(),_) for n, _ in self.installed_packages]
-                    print compare
-                    dict_installed[package] = package in compare
-            print dict_installed
-            return  False not in dict_installed.values() #(False not in dict_installed.values(),dict_installed)
-            """
 
     def upgrade(self, package, force=False):
         """Shortcut method to upgrade a package. If `force` is set to True,
