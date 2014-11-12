@@ -120,7 +120,7 @@ class VirtualEnvironment(object):
         if isinstance(package, list):
             for n in package:
                 self.install(n,force,upgrade)
-                return
+            return
         if isinstance(package, tuple):
             package='=='.join(package)
 
