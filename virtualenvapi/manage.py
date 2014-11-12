@@ -144,6 +144,13 @@ class VirtualEnvironment(object):
     def uninstall(self, package):
         """Uninstalls the given package (given in pip's package syntax) from
         this virtual environment."""
+        if isinstance(package, list):
+            for n in package:
+                self.uninstall(n)
+            return
+        if isinstance(package, tuple):
+            package='=='.join(package)
+        package=package.lower()
         if not self.is_installed(package):
             self._write_to_log('%s is not installed, skipping')
             return
