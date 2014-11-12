@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from virtualenvapi.manage import VirtualEnvironment
+import shutil
 
 def example(path='/tmp/virtualenv.test'):
     env = VirtualEnvironment(path)
@@ -28,6 +29,7 @@ def example(path='/tmp/virtualenv.test'):
     print len(pkgs), 'found:'
     print pkgs
 
+    shutil.rmtree(path)
 
 if __name__ == '__main__':
     example()

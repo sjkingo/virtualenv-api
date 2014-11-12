@@ -170,18 +170,14 @@ class VirtualEnvironment(object):
         if isinstance(package, tuple):
             package='=='.join(package)
         package=package.lower()
-        elif isinstance(package, str):
-            if package.endswith('.git'):
-                pkg_name = os.path.split(package)[1][:-4]
-                return pkg_name in self.installed_package_names
-            pkg_tuple = split_package_name(package)
-            if pkg_tuple[1] is not None:
-                return pkg_tuple in self.installed_packages
-            else:
-                return pkg_tuple[0] in self.installed_package_names
-        elif isinstance(package, tuple):
-            package = tuple(n.lower() for n in list(package))
-            return package in self.installed_packages
+        if package.endswith('.git'):
+            pkg_name = os.path.split(package)[1][:-4]
+            return pkg_name in self.installed_package_names
+        pkg_tuple = split_package_name(package)
+        if pkg_tuple[1] is not None:
+            return pkg_tuple in self.installed_packages
+        else:
+            return pkg_tuple[0] in self.installed_package_names
 
     def upgrade(self, package, force=False):
         """Shortcut method to upgrade a package. If `force` is set to True,
@@ -223,7 +219,8 @@ class VirtualEnvironment(object):
                 continue
             freeze.append(n)
             """
-        return [n for n in self._execute([self._pip_rpath, 'freeze', '-l']).split(linesep) if not n is '' and not n[0] is '#']
+        #return [n for n in self._execute([self._pip_rpath, 'freeze', '-l']).split(linesep) if not n is '' and not n[0] is '#']
+        return [self._execute([self._pip_rpath, 'freeze', '-l']).split(linesep)]
 
     @property
     def installed_package_names(self):
