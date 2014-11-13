@@ -112,11 +112,20 @@ class VirtualEnvironment(object):
         self._ready = True
 
     def install(self, package, force=False, upgrade=False):
-        """Installs the given package (given in pip's package syntax) 
+        """Installs the given package (given in pip's package syntax)
         into this virtual environment only if it is not already installed.
         If `force` is True, force an installation. If `upgrade` is True,
         attempt to upgrade the package in question. If both `force` and
         `upgrade` are True, reinstall the package and its dependencies."""
+        if isinstance(package, list):
+            for n in package:
+                self.install(n, force=force, upgrade=upgrade)
+            return
+        if isinstance(package, tuple):
+            package = '=='.join(package)
+
+        package = package.lower()
+
         if not (force or upgrade) and self.is_installed(package):
             self._write_to_log('%s is already installed, skipping (use force=True to override)' % package)
             return
@@ -135,6 +144,15 @@ class VirtualEnvironment(object):
     def uninstall(self, package):
         """Uninstalls the given package (given in pip's package syntax) from
         this virtual environment."""
+        if isinstance(package, list):
+            for n in package:
+                self.uninstall(n)
+            return
+        if isinstance(package, tuple):
+            package = '=='.join(package)
+
+        package = package.lower()
+
         if not self.is_installed(package):
             self._write_to_log('%s is not installed, skipping')
             return
@@ -146,6 +164,16 @@ class VirtualEnvironment(object):
     def is_installed(self, package):
         """Returns True if the given package (given in pip's package syntax)
         is installed in the virtual environment."""
+        if isinstance(package, list):
+            for n in package:
+                if not self.is_installed(n):
+                    return False
+            return True
+        if isinstance(package, tuple):
+            package = '=='.join(package)
+
+        package = package.lower()
+
         if package.endswith('.git'):
             pkg_name = os.path.split(package)[1][:-4]
             return pkg_name in self.installed_package_names
@@ -185,6 +213,11 @@ class VirtualEnvironment(object):
             if p == '': continue
             pkgs.append(split_package_name(p))
         return pkgs
+
+    @property
+    def pip_freeze(self):
+        """List of apps in pip freeze"""
+        return [n for n in self._execute([self._pip_rpath, 'freeze', '-l']).split(linesep) if not n is '']
 
     @property
     def installed_package_names(self):
