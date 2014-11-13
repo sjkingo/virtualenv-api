@@ -1,26 +1,36 @@
 from os import linesep, environ
 import os.path
 import subprocess
+import six
 
-from virtualenvapi.util import split_package_name
-from virtualenvapi.exceptions import VirtualenvCreationException, PackageInstallationException, PackageRemovalException
+from virtualenvapi.util import split_package_name, to_unicode, get_env_path
+from virtualenvapi.exceptions import VirtualenvCreationException, PackageInstallationException, PackageRemovalException, \
+    VirtualenvPathNotFound
 
 
 class VirtualEnvironment(object):
-    # True if the virtual environment has been set up through open_or_create()
-    _ready = False
 
-    def __init__(self, path, cache=None):
+    def __init__(self, path=None, cache=None):
+
+        if path is None:
+            path = get_env_path()
+
+        if not path:
+            raise VirtualenvPathNotFound('Path for virtualenv is not define or virtualenv is not activate')
+
         # remove trailing slash so os.path.split() behaves correctly
-        if path[-1] == '/':
+        if path[-1] == os.path.sep:
             path = path[:-1]
         self.path = path
         self.env = environ.copy()
         if cache is not None:
             self.env['PIP_DOWNLOAD_CACHE'] = os.path.expanduser(os.path.expandvars(cache))
 
+        # True if the virtual environment has been set up through open_or_create()
+        self._ready = False
+
     def __str__(self):
-        return self.path
+        return six.u(self.path)
 
     @property
     def _pip_rpath(self):
@@ -61,19 +71,21 @@ class VirtualEnvironment(object):
         """Executes the given command inside the environment and returns the output."""
         if not self._ready:
             self.open_or_create()
+        output = ''
+        error = ''
         try:
             proc = subprocess.Popen(args, cwd=self.path, env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output, error = proc.communicate()
             returncode = proc.returncode
             if returncode:
                 raise subprocess.CalledProcessError(returncode, proc, (output, error))
-            return output
+            return to_unicode(output)
         except OSError as e:
             # raise a more meaningful error with the program name
             prog = args[0]
             if prog[0] != os.sep:
                 prog = os.path.join(self.path, prog)
-            raise OSError('%s: %s' % (prog, str(e)))
+            raise OSError('%s: %s' % (prog, six.u(e)))
         except subprocess.CalledProcessError as e:
             output, error = e.output
             e.output = output
@@ -81,8 +93,8 @@ class VirtualEnvironment(object):
         finally:
             if log:
                 try:
-                    self._write_to_log(output)
-                    self._write_to_error(error)
+                    self._write_to_log(to_unicode(output))
+                    self._write_to_error(to_unicode(error))
                 except NameError:
                     pass  # We tried
 
@@ -90,13 +102,13 @@ class VirtualEnvironment(object):
         """Writes the given output to the log file, appending unless `truncate` is True."""
         # if truncate is True, set write mode to truncate
         with open(self._logfile, 'w' if truncate else 'a') as fp:
-            fp.write(s + linesep)
+            fp.writelines((to_unicode(s).encode('utf-8') if six.PY2 else to_unicode(s), ))
 
     def _write_to_error(self, s, truncate=False):
         """Writes the given output to the error file, appending unless `truncate` is True."""
         # if truncate is True, set write mode to truncate
         with open(self._errorfile, 'w' if truncate else 'a') as fp:
-            fp.write(s + linesep)
+            fp.writelines((to_unicode(s).encode('utf-8') if six.PY2 else to_unicode(s)), )
 
     def _pip_exists(self):
         """Returns True if pip exists inside the virtual environment. Can be
@@ -167,13 +179,18 @@ class VirtualEnvironment(object):
     def search(self, term):
         packages = []
         results = self._execute([self._pip_rpath, 'search', term], log=False)  # Don't want to log searches
-        for result in results.split('\n'):
+        for result in results.split(linesep):
             try:
-                name, description = result.split(' - ', 1)
-                packages.append((name.strip(), description.strip()))
+                name, description = result.split(six.u(' - '), 1)
+                name, description = name.strip(), description.strip()
+                if not name:
+                    name, description = packages[-1]
+                    packages[-1] = (name, description + six.u(' ') + result.strip())
+                else:
+                    packages.append((name.strip(), description.strip()))
             except ValueError:
                 name, description = packages[-1]
-                packages[-1] = (name, description + ' ' + result.strip())
+                packages[-1] = (name, description + six.u(' ') + result.strip())
         return packages
 
     def search_names(self, term):
@@ -181,14 +198,12 @@ class VirtualEnvironment(object):
 
     @property
     def installed_packages(self):
-        """List of all packages that are installed in this environment."""
-        pkgs = []  #: [(name, ver), ..]
-        l = self._execute([self._pip_rpath, 'freeze', '-l']).split(linesep)
-        for p in l:
-            if p == '':
-                continue
-            pkgs.append(split_package_name(p))
-        return pkgs
+        """
+        List of all packages that are installed in this environment in
+        the format [(name, ver), ..].
+        """
+        return list(map(split_package_name, filter(None, self._execute(
+                [self._pip_rpath, 'freeze', '-l']).split(linesep))))
 
     @property
     def installed_package_names(self):
