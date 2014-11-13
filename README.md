@@ -25,6 +25,14 @@ env = VirtualEnvironment('/path/to/environment/name')
 False
 ```
 
+* Check if a list of packages is installed (tuples with the syntax ('appname','3.1.version') are also valid inputs:
+
+```python
+>>> env.is_installed(['mezzanine',('django','1.4.16')])
+False
+```
+
+
 * Install the latest version of the `mezzanine` package:
 
 ```python
@@ -37,6 +45,12 @@ False
 >>> env.install('django==1.4')
 ```
 
+* Install a list of packages (tuples with the syntax ('appname','3.1.version') are also valid inputs:
+
+```python
+>>> env.install(['mezzanine','Pillow==2.2.1',('django','1.4.16')])
+```
+
 * Upgrade the `django` package to the latest version:
 
 ```python
@@ -47,6 +61,12 @@ False
 
 ```python
 >>> env.uninstall('mezzanine')
+```
+
+* Uninstall a list of packages (tuples with the syntax ('appname','3.1.version') are also valid inputs:
+
+```python
+>>> env.uninstall(['mezzanine','Pillow==2.2.1',('django','1.4.16')])
 ```
 
 * A package may be installed directly from a git repository (must end with `.git`):
