@@ -8,6 +8,24 @@ package aims to provide an API in the form of a wrapper around virtualenv.
 It can be used to create and delete environments and perform package management
 inside the environment.
 
+Installation
+------------
+
+The latest stable release is available on [PyPi](https://pypi.python.org/pypi/virtualenv-api):
+
+```
+$ pip install virtualenv-api
+```
+
+Please note that the distribution is named `virtualenv-api`, yet the Python package
+is named `virtualenvapi`.
+
+Alternatively, you may fetch the latest version from git:
+
+```
+$ pip install git+https://github.com/sjkingo/virtualenv-api.git
+```
+
 Examples
 --------
 
