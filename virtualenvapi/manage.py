@@ -112,17 +112,17 @@ class VirtualEnvironment(object):
         self._ready = True
 
     def install(self, package, force=False, upgrade=False):
-        """Installs the given package (given in pip's package syntax) 
+        """Installs the given package (given in pip's package syntax)
         into this virtual environment only if it is not already installed.
         If `force` is True, force an installation. If `upgrade` is True,
         attempt to upgrade the package in question. If both `force` and
         `upgrade` are True, reinstall the package and its dependencies."""
         if isinstance(package, list):
             for n in package:
-                self.install(n,force=force,upgrade=upgrade)
+                self.install(n, force=force, upgrade=upgrade)
             return
         if isinstance(package, tuple):
-            package='=='.join(package)
+            package = '=='.join(package)
 
         package = package.lower()
 
@@ -149,9 +149,9 @@ class VirtualEnvironment(object):
                 self.uninstall(n)
             return
         if isinstance(package, tuple):
-            package='=='.join(package)
+            package = '=='.join(package)
 
-        package=package.lower()
+        package = package.lower()
 
         if not self.is_installed(package):
             self._write_to_log('%s is not installed, skipping')
@@ -170,9 +170,9 @@ class VirtualEnvironment(object):
                     return False
             return True
         if isinstance(package, tuple):
-            package='=='.join(package)
+            package = '=='.join(package)
 
-        package=package.lower()
+        package = package.lower()
 
         if package.endswith('.git'):
             pkg_name = os.path.split(package)[1][:-4]
