@@ -119,7 +119,7 @@ class VirtualEnvironment(object):
         `upgrade` are True, reinstall the package and its dependencies."""
         if isinstance(package, list):
             for n in package:
-                self.install(n,force,upgrade)
+                self.install(n,force=force,upgrade=upgrade)
             return
         if isinstance(package, tuple):
             package='=='.join(package)
@@ -150,7 +150,9 @@ class VirtualEnvironment(object):
             return
         if isinstance(package, tuple):
             package='=='.join(package)
+
         package=package.lower()
+
         if not self.is_installed(package):
             self._write_to_log('%s is not installed, skipping')
             return
@@ -169,7 +171,9 @@ class VirtualEnvironment(object):
             return True
         if isinstance(package, tuple):
             package='=='.join(package)
+
         package=package.lower()
+
         if package.endswith('.git'):
             pkg_name = os.path.split(package)[1][:-4]
             return pkg_name in self.installed_package_names
@@ -212,14 +216,7 @@ class VirtualEnvironment(object):
 
     @property
     def pip_freeze(self):
-        """
-        freeze = []
-        for n in self._execute([self._pip_rpath, 'freeze', '-l']).split(linesep):
-            if n == '' or n[0] == '#':
-                continue
-            freeze.append(n)
-            """
-        #return [n for n in self._execute([self._pip_rpath, 'freeze', '-l']).split(linesep) if not n is '' and not n[0] is '#']
+        """List of apps in pip freeze"""
         return [n for n in self._execute([self._pip_rpath, 'freeze', '-l']).split(linesep) if not n is '']
 
     @property
