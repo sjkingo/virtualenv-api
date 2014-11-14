@@ -67,6 +67,10 @@ False
 >>> env.uninstall('mezzanine')
 ```
 
+Packages may be specified as name only (to work on the latest version),
+using pip's package syntax (e.g. `django==1.4`) or as a tuple of `('name', 'ver')`
+(e.g. `('django', '1.4')`).
+
 * A package may be installed directly from a git repository (must end with `.git`):
 
 ```python
