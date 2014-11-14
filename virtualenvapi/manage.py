@@ -112,8 +112,14 @@ class VirtualEnvironment(object):
         self._ready = True
 
     def install(self, package, force=False, upgrade=False, options=[]):
-        """Installs the given package (given in pip's package syntax) 
-        into this virtual environment only if it is not already installed.
+        """Installs the given package into this virtual environment, as 
+        specified in pip's package syntax or a tuple of ('name', 'ver'),
+        only if it is not already installed. Some valid examples:
+
+         'Django'
+         'Django==1.5'
+         ('Django', '1.5')
+
         If `force` is True, force an installation. If `upgrade` is True,
         attempt to upgrade the package in question. If both `force` and
         `upgrade` are True, reinstall the package and its dependencies.
@@ -138,8 +144,8 @@ class VirtualEnvironment(object):
             raise PackageInstallationException((e.returncode, e.output, package))
 
     def uninstall(self, package):
-        """Uninstalls the given package (given in pip's package syntax) from
-        this virtual environment."""
+        """Uninstalls the given package (given in pip's package syntax or a tuple of
+        ('name', 'ver')) from this virtual environment."""
         if isinstance(package, tuple):
             package = '=='.join(package)
         if not self.is_installed(package):
@@ -151,8 +157,8 @@ class VirtualEnvironment(object):
             raise PackageRemovalException((e.returncode, e.output, package))
 
     def is_installed(self, package):
-        """Returns True if the given package (given in pip's package syntax)
-        is installed in the virtual environment."""
+        """Returns True if the given package (given in pip's package syntax or a
+        tuple of ('name', 'ver')) is installed in the virtual environment."""
         if isinstance(package, tuple):
             package = '=='.join(package)
         if package.endswith('.git'):
