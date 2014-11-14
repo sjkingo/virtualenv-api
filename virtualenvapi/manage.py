@@ -119,6 +119,8 @@ class VirtualEnvironment(object):
         `upgrade` are True, reinstall the package and its dependencies.
         The `options` is a list of strings that can be used to pass to
         pip."""
+        if isinstance(package, tuple):
+            package = '=='.join(package)
         if not (force or upgrade) and self.is_installed(package):
             self._write_to_log('%s is already installed, skipping (use force=True to override)' % package)
             return
@@ -138,6 +140,8 @@ class VirtualEnvironment(object):
     def uninstall(self, package):
         """Uninstalls the given package (given in pip's package syntax) from
         this virtual environment."""
+        if isinstance(package, tuple):
+            package = '=='.join(package)
         if not self.is_installed(package):
             self._write_to_log('%s is not installed, skipping')
             return
@@ -149,6 +153,8 @@ class VirtualEnvironment(object):
     def is_installed(self, package):
         """Returns True if the given package (given in pip's package syntax)
         is installed in the virtual environment."""
+        if isinstance(package, tuple):
+            package = '=='.join(package)
         if package.endswith('.git'):
             pkg_name = os.path.split(package)[1][:-4]
             return pkg_name in self.installed_package_names
