@@ -127,7 +127,7 @@ class VirtualEnvironment(object):
         pip."""
         if isinstance(package, tuple):
             package = '=='.join(package)
-        if not (force or upgrade) and self.is_installed(package):
+        if not (force or upgrade) and isinstance(package, str) and self.is_installed(package):
             self._write_to_log('%s is already installed, skipping (use force=True to override)' % package)
             return
         if not isinstance(options, list):
@@ -138,6 +138,17 @@ class VirtualEnvironment(object):
                 options += ['--force-reinstall']
         elif force:
             options += ['--ignore-installed']
+        if isinstance(package, list):
+            package = ['=='.join(n) if isinstance(n, tuple) else n for n in package]
+            for n in package:
+                if self.is_installed(n) and not (force or upgrade):
+                    self._write_to_log('%s is already installed, skipping (use force=True to override)' % n)
+                    packages.remove(n)
+            try:
+                self._execute([self._pip_rpath, 'install'] + package + options)
+            except subprocess.CalledProcessError as e:
+                raise PackageInstallationException((e.returncode, e.output, package))
+            return
         try:
             self._execute([self._pip_rpath, 'install', package] + options)
         except subprocess.CalledProcessError as e:
@@ -146,10 +157,20 @@ class VirtualEnvironment(object):
     def uninstall(self, package):
         """Uninstalls the given package (given in pip's package syntax or a tuple of
         ('name', 'ver')) from this virtual environment."""
+        if isinstance(package, list):
+            package = ['=='.join(n) if isinstance(n, tuple) else n for n in package]
+            for n in packages:
+                if not self.is_installed(n):
+                    self._write_to_log('%s is not installed, skipping' % n)
+                    package.remove(n)
+            try:
+                self._execute([self._pip_rpath, 'uninstall', '-y'] + package)
+            except subprocess.CalledProcessError as e:
+                raise PackageRemovalException((e.returncode, e.output, package))
         if isinstance(package, tuple):
             package = '=='.join(package)
         if not self.is_installed(package):
-            self._write_to_log('%s is not installed, skipping')
+            self._write_to_log('%s is not installed, skipping' % package)
             return
         try:
             self._execute([self._pip_rpath, 'uninstall', '-y', package])
