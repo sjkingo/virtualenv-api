@@ -3,7 +3,7 @@ import os.path
 import subprocess
 import six
 
-from virtualenvapi.util import split_package_name, to_unicode, get_env_path
+from virtualenvapi.util import split_package_name, to_text, get_env_path
 from virtualenvapi.exceptions import VirtualenvCreationException, PackageInstallationException, PackageRemovalException, \
     VirtualenvPathNotFound
 
@@ -79,7 +79,7 @@ class VirtualEnvironment(object):
             returncode = proc.returncode
             if returncode:
                 raise subprocess.CalledProcessError(returncode, proc, (output, error))
-            return to_unicode(output)
+            return to_text(output)
         except OSError as e:
             # raise a more meaningful error with the program name
             prog = args[0]
@@ -93,8 +93,8 @@ class VirtualEnvironment(object):
         finally:
             if log:
                 try:
-                    self._write_to_log(to_unicode(output))
-                    self._write_to_error(to_unicode(error))
+                    self._write_to_log(to_text(output))
+                    self._write_to_error(to_text(error))
                 except NameError:
                     pass  # We tried
 
@@ -102,13 +102,13 @@ class VirtualEnvironment(object):
         """Writes the given output to the log file, appending unless `truncate` is True."""
         # if truncate is True, set write mode to truncate
         with open(self._logfile, 'w' if truncate else 'a') as fp:
-            fp.writelines((to_unicode(s).encode('utf-8') if six.PY2 else to_unicode(s), ))
+            fp.writelines((to_text(s) if six.PY2 else to_text(s), ))
 
     def _write_to_error(self, s, truncate=False):
         """Writes the given output to the error file, appending unless `truncate` is True."""
         # if truncate is True, set write mode to truncate
         with open(self._errorfile, 'w' if truncate else 'a') as fp:
-            fp.writelines((to_unicode(s).encode('utf-8') if six.PY2 else to_unicode(s)), )
+            fp.writelines((to_text(s)), )
 
     def _pip_exists(self):
         """Returns True if pip exists inside the virtual environment. Can be

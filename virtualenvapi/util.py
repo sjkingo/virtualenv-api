@@ -3,7 +3,7 @@ import six
 import sys
 
 
-def to_unicode(source):
+def to_text(source):
     if six.PY3:
         if isinstance(source, str):
             return source
@@ -11,8 +11,8 @@ def to_unicode(source):
             return source.decode("utf-8")
     elif six.PY2:
         if isinstance(source, unicode):
-            return source
-        return source.decode("utf-8")
+            return source.encode("utf-8")
+        return source
     else:
         return source
 
@@ -36,6 +36,6 @@ def split_package_name(p):
     """Splits the given package name and returns a tuple (name, ver)."""
     s = p.split(six.u('=='))
     if len(s) == 1:
-        return (to_unicode(s[0]), None)
+        return (to_text(s[0]), None)
     else:
-        return (to_unicode(s[0]), to_unicode(s[1]))
+        return (to_text(s[0]), to_text(s[1]))
