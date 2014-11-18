@@ -4,8 +4,7 @@ import subprocess
 import six
 
 from virtualenvapi.util import split_package_name, to_text, get_env_path
-from virtualenvapi.exceptions import VirtualenvCreationException, PackageInstallationException, PackageRemovalException, \
-    VirtualenvPathNotFound
+from virtualenvapi.exceptions *
 
 
 class VirtualEnvironment(object):
