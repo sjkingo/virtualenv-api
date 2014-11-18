@@ -4,7 +4,7 @@ import subprocess
 import six
 
 from virtualenvapi.util import split_package_name, to_text, get_env_path
-from virtualenvapi.exceptions *
+from virtualenvapi.exceptions import *
 
 
 class VirtualEnvironment(object):
