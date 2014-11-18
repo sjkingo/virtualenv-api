@@ -1,6 +1,13 @@
 Changes
 =======
 
+2.1.0 - 2014-11-19
+
+ * Python 3 support (@r1s)
+ * Unit tests for base functionality (@r1s)
+ * Better Unicode handling (@r1s)
+ * Tuple support for specifying package versions (@philippeowagner)
+
 2.0.1 - 2014-11-14
 
  * Support passing command line options directly to pip (@sposs)

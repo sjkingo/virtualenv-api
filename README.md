@@ -8,6 +8,8 @@ package aims to provide an API in the form of a wrapper around virtualenv.
 It can be used to create and delete environments and perform package management
 inside the environment.
 
+Full support is provided for Python 2.5+ and Python 3.
+
 Installation
 ------------
 
