@@ -1,3 +1,7 @@
+class VirtualenvPathNotFound(EnvironmentError):
+    pass
+
+
 class VirtualenvCreationException(EnvironmentError):
     pass
 
