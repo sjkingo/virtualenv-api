@@ -1,6 +1,10 @@
 Changes
 =======
 
+2.1.1 - 2014-11-19
+
+ * Fix typo that broke from 2.1.0 release (@sjkingo)
+
 2.1.0 - 2014-11-19
 
  * Python 3 support (@r1s)
