@@ -17,9 +17,10 @@ def example(path=tempfile.mkdtemp('virtualenv.test')):
     print(env.installed_packages)
 
     payments_repo = 'git+git://github.com/sjkingo/cartridge-payments.git'
-    print('cartridge-payments installed?', env.is_installed(payments_repo))
+    payments_pkg = payments_repo.split('/')[-1].replace('.git', '')
+    print('cartridge-payments installed?', env.is_installed(payments_pkg))
     env.install(payments_repo)
-    print('cartridge-payments installed?', env.is_installed(payments_repo))
+    print('cartridge-payments installed?', env.is_installed(payments_pkg))
     print(env.installed_packages)
 
     env.uninstall('mezzanine')
