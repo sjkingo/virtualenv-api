@@ -160,7 +160,7 @@ class VirtualEnvironment(object):
         if isinstance(package, tuple):
             package = '=='.join(package)
         if not self.is_installed(package):
-            self._write_to_log('%s is not installed, skipping')
+            self._write_to_log('%s is not installed, skipping' % package)
             return
         try:
             self._execute([self._pip_rpath, 'uninstall', '-y', package])
