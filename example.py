@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import tempfile
 
 from virtualenvapi.manage import VirtualEnvironment
