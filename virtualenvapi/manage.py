@@ -122,7 +122,7 @@ class VirtualEnvironment(object):
             self._create()
         self._ready = True
 
-    def install(self, package, force=False, upgrade=False, options=[]):
+    def install(self, package, force=False, upgrade=False, options=None):
         """Installs the given package into this virtual environment, as 
         specified in pip's package syntax or a tuple of ('name', 'ver'),
         only if it is not already installed. Some valid examples:
@@ -141,8 +141,8 @@ class VirtualEnvironment(object):
         if not (force or upgrade) and self.is_installed(package):
             self._write_to_log('%s is already installed, skipping (use force=True to override)' % package)
             return
-        if not isinstance(options, list):
-            raise ValueError("Options must be a list of strings.")
+        if options is None:
+            options = []
         if upgrade:
             options += ['--upgrade']
             if force:
