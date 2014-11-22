@@ -122,8 +122,8 @@ class VirtualEnvironment(object):
             self._create()
         self._ready = True
 
-    def install(self, package, force=False, upgrade=False, options=[]):
-        """Installs the given package into this virtual environment, as 
+    def install(self, package, force=False, upgrade=False, options=None):
+        """Installs the given package into this virtual environment, as
         specified in pip's package syntax or a tuple of ('name', 'ver'),
         only if it is not already installed. Some valid examples:
 
@@ -136,6 +136,8 @@ class VirtualEnvironment(object):
         `upgrade` are True, reinstall the package and its dependencies.
         The `options` is a list of strings that can be used to pass to
         pip."""
+        if options is None:
+            options = []
         if isinstance(package, tuple):
             package = '=='.join(package)
         if not (force or upgrade) and self.is_installed(package):
