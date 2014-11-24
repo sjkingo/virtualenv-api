@@ -1,6 +1,8 @@
 virtualenv-api - an API for virtualenv
 ======================================
 
+[![Build Status](https://travis-ci.org/sjkingo/virtualenv-api.svg)](https://travis-ci.org/sjkingo/virtualenv-api)
+
 [virtualenv](http://www.virtualenv.org/) is a tool to create isolated Python
 environments.  Unfortunately, it does not expose a native Python API. This
 package aims to provide an API in the form of a wrapper around virtualenv.
@@ -8,7 +10,7 @@ package aims to provide an API in the form of a wrapper around virtualenv.
 It can be used to create and delete environments and perform package management
 inside the environment.
 
-Full support is provided for Python 2.5+ and Python 3.
+Full support is provided for Python 2.6+ and Python 3.3+.
 
 Installation
 ------------
