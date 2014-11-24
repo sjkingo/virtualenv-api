@@ -5,7 +5,7 @@ python:
   - "3.3"
   - "3.4"
 install: "pip install -q six"
-script: python test.py
+script: python tests.py
 branches:
     only:
         - master
