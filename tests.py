@@ -55,6 +55,8 @@ class BaseTest(TestCase):
     def test_uninstall(self):
         self._install_packages(packages_for_tests)
         for pack in packages_for_tests:
+            if pack.endswith('.git'):
+                pack = pack.split('/')[-1].replace('.git', '')
             self.virtual_env_obj.uninstall(pack)
             self.assertFalse(self.virtual_env_obj.is_installed(pack))
 
