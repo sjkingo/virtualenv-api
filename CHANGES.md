@@ -1,6 +1,13 @@
 Changes
 =======
 
+2.1.2 - 2014-11-25
+
+ * Added test builds through Travis CI (@sjkingo)
+ * Fixed default `options` bug introduced in 2.0.1 (@ColMcp, @sposs)
+ * Updated example.py (@sjkingo)
+ * Fix typo in logging (@yannik-ammann)
+
 2.1.1 - 2014-11-19
 
  * Fix typo that broke from 2.1.0 release (@sjkingo)
