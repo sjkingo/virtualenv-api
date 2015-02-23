@@ -9,7 +9,7 @@ from virtualenvapi.exceptions import *
 
 class VirtualEnvironment(object):
 
-    def __init__(self, path=None, cache=None):
+    def __init__(self, path=None, python=None, cache=None):
 
         if path is None:
             path = get_env_path()
@@ -21,6 +21,9 @@ class VirtualEnvironment(object):
         if path[-1] == os.path.sep:
             path = path[:-1]
         self.path = path
+        
+        self.python = python
+        
         self.env = environ.copy()
         if cache is not None:
             self.env['PIP_DOWNLOAD_CACHE'] = os.path.expanduser(os.path.expandvars(cache))
@@ -58,7 +61,10 @@ class VirtualEnvironment(object):
 
     def _create(self):
         """Executes `virtualenv` to create a new environment."""
-        proc = subprocess.Popen(['virtualenv', self.name], cwd=self.root, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if self.python is None:
+            proc = subprocess.Popen(['virtualenv', self.name], cwd=self.root, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        else:
+            proc = subprocess.Popen(['virtualenv', '-p', self.python, self.name], cwd=self.root, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, error = proc.communicate()
         returncode = proc.returncode
         if returncode:
