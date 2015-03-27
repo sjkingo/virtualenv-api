@@ -99,76 +99,15 @@ class BaseTest(TestCase):
             shutil.rmtree(self.env_path)
 
 
-class Python3TestCase(TestCase):
-
-    env_path = None
+class Python3TestCase(BaseTest):
 
     def setUp(self):
         self.env_path = self.setup_env()
         self.python = which('python3')
         self.virtual_env_obj = VirtualEnvironment(self.env_path, python=self.python)
 
-    def setup_env(self):
-        env_path = self.env_path
-        if env_path is None:
-            env_path = tempfile.mkdtemp('test_env')
-            virt_env = VirtualEnvironment(env_path)
-            virt_env._create()
-            for pack in packages_for_pre_install:
-                virt_env.install(pack)
-
-        return env_path
-
-    def _install_packages(self, packages):
-        for pack in packages:
-            self.virtual_env_obj.install(pack)
-
-    def _uninstall_packages(self, packages):
-        for pack in packages:
-            self.virtual_env_obj.uninstall(pack)
-
     def test_python_version(self):
         self.assertEqual(self.virtual_env_obj.python, self.python)
-
-    def test_installed(self):
-        for pack in packages_for_pre_install:
-            self.assertTrue(self.virtual_env_obj.is_installed(pack))
-        self.assertFalse(self.virtual_env_obj.is_installed(''.join(random.sample(string.ascii_letters, 30))))
-
-    def test_install(self):
-        self._uninstall_packages(packages_for_tests)
-        for pack in packages_for_tests:
-            self.virtual_env_obj.install(pack)
-            self.assertTrue(self.virtual_env_obj.is_installed(pack))
-
-    def test_uninstall(self):
-        self._install_packages(packages_for_tests)
-        for pack in packages_for_tests:
-            if pack.endswith('.git'):
-                pack = pack.split('/')[-1].replace('.git', '')
-            self.virtual_env_obj.uninstall(pack)
-            self.assertFalse(self.virtual_env_obj.is_installed(pack))
-
-    def test_search(self):
-        pack = packages_for_tests[0].lower()
-        result = self.virtual_env_obj.search(pack)
-        self.assertIsInstance(result, list)
-        self.assertTrue(bool(result))
-        if result:
-            self.assertTrue(isinstance(result[0], (tuple, list)))
-            self.assertIn(pack, (n.lower() for n in dict(result).keys()))
-
-    def test_search_names(self):
-        pack = packages_for_tests[0].lower()
-        result = self.virtual_env_obj.search_names(pack)
-        self.assertIsInstance(result, list)
-        self.assertIn(pack, (n.lower() for n in result))
-
-    def tearDown(self):
-        if os.path.exists(self.env_path) and self.__class__.env_path is None:
-            shutil.rmtree(self.env_path)
-
-
 
 
 class EnvironmentTest(BaseTest):
