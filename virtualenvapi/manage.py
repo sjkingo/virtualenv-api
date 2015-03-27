@@ -208,8 +208,9 @@ class VirtualEnvironment(object):
                 else:
                     packages.append((name.strip(), description.strip()))
             except ValueError:
-                name, description = packages[-1]
-                packages[-1] = (name, description + six.u(' ') + result.strip())
+                if len(packages):
+                    name, description = packages[-1]
+                    packages[-1] = (name, description + six.u(' ') + result.strip())
         return packages
 
     def search_names(self, term):
