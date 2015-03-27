@@ -3,7 +3,7 @@ import os.path
 import subprocess
 import six
 
-from virtualenvapi.util import split_package_name, to_text, get_env_path
+from virtualenvapi.util import split_package_name, to_text, get_env_path, to_ascii
 from virtualenvapi.exceptions import *
 
 
@@ -210,7 +210,7 @@ class VirtualEnvironment(object):
             except ValueError:
                 if len(packages):
                     name, description = packages[-1]
-                    packages[-1] = (name, description + six.u(' ') + result.strip())
+                    packages[-1] = (name, to_ascii(description) + six.u(' ') + to_ascii(result.strip()))
         return packages
 
     def search_names(self, term):

@@ -17,6 +17,11 @@ def to_text(source):
         return source
 
 
+def to_ascii(source):
+    if isinstance(source, six.string_types):
+        return "".join([c for c in source if ord(c) < 128])
+
+
 def get_env_path():
     prefix_name = 'real_prefix'
     virtual_env_path_environ_key = 'VIRTUAL_ENV'
