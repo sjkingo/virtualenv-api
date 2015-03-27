@@ -109,6 +109,10 @@ class Python3TestCase(BaseTest):
 
     def test_python_version(self):
         self.assertEqual(self.virtual_env_obj.python, self.python)
+        self.assertEqual(
+            os.path.dirname(self.python),
+            os.path.dirname(which('pip'))
+        )
 
 
 class EnvironmentTest(BaseTest):
