@@ -103,7 +103,8 @@ class Python3TestCase(BaseTest):
 
     def setUp(self):
         self.env_path = self.setup_env()
-        self.python = which('python3')
+        self.python = which('python')
+        self.assertIsNotNone(self.python)
         self.virtual_env_obj = VirtualEnvironment(self.env_path, python=self.python)
 
     def test_python_version(self):
