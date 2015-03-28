@@ -10,3 +10,4 @@ script: python tests.py
 branches:
     only:
         - master
+sudo: false
