@@ -40,6 +40,13 @@ from virtualenvapi.manage import VirtualEnvironment
 env = VirtualEnvironment('/path/to/environment/name')
 ```
 
+You may also specify the Python interpreter to use in this environment by
+passing the `python` argument to the class constructor:
+
+```python
+env = VirtualEnvironment('/path/to/environment/name', python='python3')
+```
+
 * Check if the `mezzanine` package is installed:
 
 ```python
