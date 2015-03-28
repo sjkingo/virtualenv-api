@@ -41,7 +41,7 @@ env = VirtualEnvironment('/path/to/environment/name')
 ```
 
 You may also specify the Python interpreter to use in this environment by
-passing the `python` argument to the class constructor:
+passing the `python` argument to the class constructor (new in 2.1.3):
 
 ```python
 env = VirtualEnvironment('/path/to/environment/name', python='python3')
