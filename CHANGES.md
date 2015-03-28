@@ -1,6 +1,11 @@
 Changes
 =======
 
+2.1.3 - 2015-03-28
+
+ * Support changing the interpreter path (@jlafon)
+ * Improve Unicode support in pip search that broke tests (@jlafon)
+
 2.1.2 - 2014-11-25
 
  * Added test builds through Travis CI (@sjkingo)
