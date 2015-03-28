@@ -3,19 +3,21 @@ import os.path
 import subprocess
 import six
 
-from virtualenvapi.util import split_package_name, to_text, get_env_path
+from virtualenvapi.util import split_package_name, to_text, get_env_path, to_ascii
 from virtualenvapi.exceptions import *
 
 
 class VirtualEnvironment(object):
 
-    def __init__(self, path=None, cache=None):
+    def __init__(self, path=None, python=None, cache=None):
 
         if path is None:
             path = get_env_path()
 
         if not path:
             raise VirtualenvPathNotFound('Path for virtualenv is not define or virtualenv is not activate')
+
+        self.python = python
 
         # remove trailing slash so os.path.split() behaves correctly
         if path[-1] == os.path.sep:
@@ -58,7 +60,11 @@ class VirtualEnvironment(object):
 
     def _create(self):
         """Executes `virtualenv` to create a new environment."""
-        proc = subprocess.Popen(['virtualenv', self.name], cwd=self.root, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if self.python is None:
+            args = ['virtualenv', self.name]
+        else:
+            args = ['virtualenv', '-p', self.python, self.name]
+        proc = subprocess.Popen(args, cwd=self.root, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, error = proc.communicate()
         returncode = proc.returncode
         if returncode:
@@ -202,8 +208,9 @@ class VirtualEnvironment(object):
                 else:
                     packages.append((name.strip(), description.strip()))
             except ValueError:
-                name, description = packages[-1]
-                packages[-1] = (name, description + six.u(' ') + result.strip())
+                if len(packages):
+                    name, description = packages[-1]
+                    packages[-1] = (name, to_ascii(description) + six.u(' ') + to_ascii(result.strip()))
         return packages
 
     def search_names(self, term):

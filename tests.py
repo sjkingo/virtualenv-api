@@ -14,6 +14,25 @@ packages_for_pre_install = ['pep8']
 packages_for_tests = ['flask', 'git+git://github.com/sjkingo/cartridge-payments.git']
 
 
+def which(program):
+
+    def is_exe(fpath):
+        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
+
+    fpath, fname = os.path.split(program)
+
+    if fpath:
+        if is_exe(program):
+            return program
+    else:
+        for path in os.environ["PATH"].split(os.pathsep):
+            path = path.strip('"')
+            exe_file = os.path.join(path, program)
+            if is_exe(exe_file):
+                return exe_file
+    return None
+
+
 class BaseTest(TestCase):
 
     env_path = None
@@ -78,6 +97,22 @@ class BaseTest(TestCase):
     def tearDown(self):
         if os.path.exists(self.env_path) and self.__class__.env_path is None:
             shutil.rmtree(self.env_path)
+
+
+class Python3TestCase(BaseTest):
+
+    def setUp(self):
+        self.env_path = self.setup_env()
+        self.python = which('python')
+        self.assertIsNotNone(self.python)
+        self.virtual_env_obj = VirtualEnvironment(self.env_path, python=self.python)
+
+    def test_python_version(self):
+        self.assertEqual(self.virtual_env_obj.python, self.python)
+        self.assertEqual(
+            os.path.dirname(self.python),
+            os.path.dirname(which('pip'))
+        )
 
 
 class EnvironmentTest(BaseTest):
