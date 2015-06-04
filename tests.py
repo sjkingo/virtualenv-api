@@ -10,7 +10,7 @@ import six
 from virtualenvapi.manage import VirtualEnvironment
 
 
-packages_for_pre_install = ['pep8']
+packages_for_pre_install = ['pep8', 'wheel']
 packages_for_tests = ['flask', 'git+git://github.com/sjkingo/cartridge-payments.git']
 
 
@@ -78,6 +78,12 @@ class BaseTest(TestCase):
                 pack = pack.split('/')[-1].replace('.git', '')
             self.virtual_env_obj.uninstall(pack)
             self.assertFalse(self.virtual_env_obj.is_installed(pack))
+
+    def test_wheel(self):
+        for pack in packages_for_tests:
+            self.virtual_env_obj.wheel(pack, options=['--wheel-dir=/tmp/wheelhouse'])
+            self.virtual_env_obj.install(pack, options=['--no-index', '--find-links=/tmp/wheelhouse', '--use-wheel'])
+            self.assertTrue(self.virtual_env_obj.is_installed(pack))
 
     def test_search(self):
         pack = packages_for_tests[0].lower()

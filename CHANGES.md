@@ -1,6 +1,10 @@
 Changes
 =======
 
+2.1.4 - 2015-06-04
+
+ * Support for creating a wheel of packages (@rmb938)
+
 2.1.3 - 2015-03-28
 
  * Support changing the interpreter path (@jlafon)
