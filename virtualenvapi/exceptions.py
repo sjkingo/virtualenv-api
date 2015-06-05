@@ -13,3 +13,6 @@ class PackageInstallationException(EnvironmentError):
 class PackageRemovalException(EnvironmentError):
     pass
 
+class PackageWheelException(EnvironmentError):
+    pass
+

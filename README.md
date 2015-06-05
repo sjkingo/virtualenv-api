@@ -60,6 +60,12 @@ False
 >>> env.install('mezzanine')
 ```
 
+* A wheel of the latest version of the `mezzanine` package (new in 2.1.4):
+
+```python
+>>> env.wheel('mezzanine')
+```
+
 * Install version 1.4 of the `django` package (this is pip's syntax):
 
 ```python

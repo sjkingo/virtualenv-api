@@ -175,6 +175,30 @@ class VirtualEnvironment(object):
         except subprocess.CalledProcessError as e:
             raise PackageRemovalException((e.returncode, e.output, package))
 
+    def wheel(self, package, options=None):
+        """Creates a wheel of the given package from this virtual environment, 
+        as specified in pip's package syntax or a tuple of ('name', 'ver'),
+        only if it is not already installed. Some valid examples:
+
+         'Django'
+         'Django==1.5'
+         ('Django', '1.5')
+
+        The `options` is a list of strings that can be used to pass to
+        pip."""
+        if options is None:
+            options = []
+        if isinstance(package, tuple):
+            package = '=='.join(package)
+        if not self.is_installed('wheel'):
+            raise PackageWheelException((0, "Wheel package must be installed in the virtual environment", package))
+        if not isinstance(options, list):
+            raise ValueError("Options must be a list of strings.")
+        try:
+            self._execute([self._pip_rpath, 'wheel', package] + options)
+        except subprocess.CalledProcessError as e:
+            raise PackageWheelException((e.returncode, e.output, package))
+
     def is_installed(self, package):
         """Returns True if the given package (given in pip's package syntax or a
         tuple of ('name', 'ver')) is installed in the virtual environment."""
