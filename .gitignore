@@ -1,3 +1,4 @@
 *.pyc
+/build/
 /dist/
 /virtualenv_api.egg-info/
