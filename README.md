@@ -2,6 +2,8 @@ virtualenv-api - an API for virtualenv
 ======================================
 
 [![Build Status](https://travis-ci.org/sjkingo/virtualenv-api.svg)](https://travis-ci.org/sjkingo/virtualenv-api)
+[![Latest version](https://img.shields.io/pypi/v/virtualenv-api.svg)](https://pypi.python.org/pypi/virtualenv-api)
+[![BSD License](https://img.shields.io/pypi/l/virtualenv-api.svg)](https://github.com/sjkingo/virtualenv-api/blob/master/LICENSE)
 
 [virtualenv](http://www.virtualenv.org/) is a tool to create isolated Python
 environments.  Unfortunately, it does not expose a native Python API. This
