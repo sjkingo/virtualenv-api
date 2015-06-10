@@ -1,6 +1,11 @@
 Changes
 =======
 
+2.1.6 - 2015-06-10
+
+ * Version bump for broken PyPi release (@sjkingo)
+   (no new changes to code)
+
 2.1.5 - 2015-06-10
 
  * Improved search function that will return more accurate results. This
