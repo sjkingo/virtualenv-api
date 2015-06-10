@@ -84,6 +84,9 @@ class VirtualEnvironment(object):
             returncode = proc.returncode
             if returncode:
                 raise subprocess.CalledProcessError(returncode, proc, (output, error))
+            # Remove pip upgrade warning from output
+            if output.startswith('You are using pip version'):
+                output = linesep.join(output.split(linesep)[2:])
             return to_text(output)
         except OSError as e:
             # raise a more meaningful error with the program name
