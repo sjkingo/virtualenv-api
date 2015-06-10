@@ -223,21 +223,24 @@ class VirtualEnvironment(object):
         self.install(package, upgrade=True, force=force)
 
     def search(self, term):
-        packages = []
+        """
+        Searches the PyPi repository for the given `term` and returns a
+        dictionary of results.
+        """
+        packages = {}
         results = self._execute([self._pip_rpath, 'search', term], log=False)  # Don't want to log searches
         for result in results.split(linesep):
             try:
                 name, description = result.split(six.u(' - '), 1)
-                name, description = name.strip(), description.strip()
-                if not name:
-                    name, description = packages[-1]
-                    packages[-1] = (name, description + six.u(' ') + result.strip())
-                else:
-                    packages.append((name.strip(), description.strip()))
             except ValueError:
-                if len(packages):
-                    name, description = packages[-1]
-                    packages[-1] = (name, to_ascii(description) + six.u(' ') + to_ascii(result.strip()))
+                # '-' not in result so unable to split into tuple;
+                # this could be from a multi-line description
+                continue
+            else:
+                name = name.strip()
+                if len(name) == 0:
+                    continue
+                packages[name] = description.split(six.u('<br'), 1)[0].strip()
         return packages
 
     def search_names(self, term):
