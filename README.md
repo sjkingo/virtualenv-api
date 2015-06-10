@@ -110,11 +110,20 @@ using pip's package syntax (e.g. `django==1.4`) or as a tuple of `('name', 'ver'
 ['django', 'wsgiref']
 ```
 
-* Search for a package on PyPI:
+* Search for a package on PyPI (changed in 2.1.5: this now returns a dictionary instead of list):
 
 ```python
->>> env.search('requests')[0]
-('requests', 'Python HTTP for Humans.')
+>>> env.search('virtualenv-api')
+{'virtualenv-api': 'An API for virtualenv/pip'}
+>>> len(env.search('requests'))
+231
+```
+
+* The old functionality (pre 2.1.5) of `env.search` may be used:
+
+```python
+>>> list(env.search('requests').items())
+[('virtualenv-api', 'An API for virtualenv/pip')]
 ```
 
 Verbose output from each command is available in the environment's `build.log`
