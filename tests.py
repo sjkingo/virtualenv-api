@@ -88,17 +88,16 @@ class BaseTest(TestCase):
     def test_search(self):
         pack = packages_for_tests[0].lower()
         result = self.virtual_env_obj.search(pack)
-        self.assertIsInstance(result, list)
+        self.assertIsInstance(result, dict)
         self.assertTrue(bool(result))
         if result:
-            self.assertTrue(isinstance(result[0], (tuple, list)))
-            self.assertIn(pack, (n.lower() for n in dict(result).keys()))
+            self.assertIn(pack, [k.lower() for k in result.keys()])
 
     def test_search_names(self):
         pack = packages_for_tests[0].lower()
         result = self.virtual_env_obj.search_names(pack)
         self.assertIsInstance(result, list)
-        self.assertIn(pack, (n.lower() for n in result))
+        self.assertIn(pack, [k.lower() for k in result])
 
     def tearDown(self):
         if os.path.exists(self.env_path) and self.__class__.env_path is None:

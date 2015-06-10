@@ -246,7 +246,7 @@ class VirtualEnvironment(object):
         return packages
 
     def search_names(self, term):
-        return [name for name, description in self.search(term)]
+        return self.search(term).keys()
 
     @property
     def installed_packages(self):
