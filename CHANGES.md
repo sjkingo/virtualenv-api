@@ -1,6 +1,14 @@
 Changes
 =======
 
+2.1.5 - 2015-06-10
+
+ * Improved search function that will return more accurate results. This
+   includes a breaking change where the package list returned by `env.search()`
+   is now a dictionary. (@sjkingo)
+ * Prevent pip from checking for new version of itself and polluting the output
+   of some commands (@sjkingo)
+
 2.1.4 - 2015-06-04
 
  * Support for creating a wheel of packages (@rmb938)

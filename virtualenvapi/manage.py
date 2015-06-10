@@ -226,6 +226,8 @@ class VirtualEnvironment(object):
         """
         Searches the PyPi repository for the given `term` and returns a
         dictionary of results.
+
+        New in 2.1.5: returns a dictionary instead of list of tuples
         """
         packages = {}
         results = self._execute([self._pip_rpath, 'search', term], log=False)  # Don't want to log searches
