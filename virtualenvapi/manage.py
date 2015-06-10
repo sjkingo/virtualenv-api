@@ -79,14 +79,13 @@ class VirtualEnvironment(object):
         output = ''
         error = ''
         try:
+            if args[0] == 'pip':
+                args += ['--disable-pip-version-check']
             proc = subprocess.Popen(args, cwd=self.path, env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output, error = proc.communicate()
             returncode = proc.returncode
             if returncode:
                 raise subprocess.CalledProcessError(returncode, proc, (output, error))
-            # Remove pip upgrade warning from output
-            if output.startswith('You are using pip version'):
-                output = linesep.join(output.split(linesep)[2:])
             return to_text(output)
         except OSError as e:
             # raise a more meaningful error with the program name
@@ -246,7 +245,7 @@ class VirtualEnvironment(object):
         return packages
 
     def search_names(self, term):
-        return self.search(term).keys()
+        return list(self.search(term).keys())
 
     @property
     def installed_packages(self):
