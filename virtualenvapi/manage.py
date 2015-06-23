@@ -208,7 +208,8 @@ class VirtualEnvironment(object):
             package = '=='.join(package)
         if package.endswith('.git'):
             pkg_name = os.path.split(package)[1][:-4]
-            return pkg_name in self.installed_package_names
+            return pkg_name in self.installed_package_names or \
+                    pkg_name.replace('_', '-') in self.installed_package_names
         pkg_tuple = split_package_name(package)
         if pkg_tuple[1] is not None:
             return pkg_tuple in self.installed_packages
