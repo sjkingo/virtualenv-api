@@ -16,11 +16,11 @@ def example(path=tempfile.mkdtemp('virtualenv.test')):
 
     print(env.installed_packages)
 
-    payments_repo = 'git+git://github.com/sjkingo/cartridge-payments.git'
-    payments_pkg = payments_repo.split('/')[-1].replace('.git', '')
-    print('cartridge-payments installed?', env.is_installed(payments_pkg))
-    env.install(payments_repo)
-    print('cartridge-payments installed?', env.is_installed(payments_pkg))
+    repo = 'git+git://github.com/sjkingo/django_auth_ldap3.git'
+    pkg = repo.split('/')[-1].replace('.git', '')
+    print('django_auth_ldap3 installed?', env.is_installed(pkg))
+    env.install(repo)
+    print('django_auth_ldap3 installed?', env.is_installed(pkg))
     print(env.installed_packages)
 
     env.uninstall('mezzanine')

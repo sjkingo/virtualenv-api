@@ -11,7 +11,7 @@ from virtualenvapi.manage import VirtualEnvironment
 
 
 packages_for_pre_install = ['pep8', 'wheel']
-packages_for_tests = ['flask', 'git+git://github.com/sjkingo/cartridge-payments.git']
+packages_for_tests = ['flask', 'git+git://github.com/sjkingo/django_auth_ldap3.git']
 
 
 def which(program):
