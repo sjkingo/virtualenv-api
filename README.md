@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/sjkingo/virtualenv-api.png?label=ready&title=Ready)](https://waffle.io/sjkingo/virtualenv-api)
 virtualenv-api - an API for virtualenv
 ======================================
 
