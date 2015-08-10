@@ -1,6 +1,8 @@
 Changes
 =======
 
+* Added support for passing ~ to construct environment (e.g. `~user/venv`)
+
 2.1.6 - 2015-06-10
 
  * Version bump for broken PyPi release (@sjkingo)

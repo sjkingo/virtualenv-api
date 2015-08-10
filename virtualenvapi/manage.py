@@ -22,7 +22,10 @@ class VirtualEnvironment(object):
         # remove trailing slash so os.path.split() behaves correctly
         if path[-1] == os.path.sep:
             path = path[:-1]
-        self.path = path
+
+        # Expand path so shell shortcuts may be used such as ~
+        self.path = os.path.abspath(os.path.expanduser(path))
+
         self.env = environ.copy()
         if cache is not None:
             self.env['PIP_DOWNLOAD_CACHE'] = os.path.expanduser(os.path.expandvars(cache))
