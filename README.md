@@ -50,6 +50,13 @@ passing the `python` argument to the class constructor (new in 2.1.3):
 env = VirtualEnvironment('/path/to/environment/name', python='python3')
 ```
 
+If you have already activated a virtualenv and wish to operate on it, simply call
+`VirtualEnvironment` with no arguments:
+
+```python
+env = VirtualEnvironment()
+```
+
 * Check if the `mezzanine` package is installed:
 
 ```python
