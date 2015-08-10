@@ -57,6 +57,9 @@ If you have already activated a virtualenv and wish to operate on it, simply cal
 env = VirtualEnvironment()
 ```
 
+An optional argument `readonly` may be provided (defaults to `False`) that 
+will prevent all operations that could potentially modify the environment.
+
 * Check if the `mezzanine` package is installed:
 
 ```python

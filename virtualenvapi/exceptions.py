@@ -16,3 +16,5 @@ class PackageRemovalException(EnvironmentError):
 class PackageWheelException(EnvironmentError):
     pass
 
+class VirtualenvReadonlyException(Exception):
+    message = 'The virtualenv was constructed readonly and cannot be modified'

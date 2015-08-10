@@ -9,7 +9,7 @@ from virtualenvapi.exceptions import *
 
 class VirtualEnvironment(object):
 
-    def __init__(self, path=None, python=None, cache=None):
+    def __init__(self, path=None, python=None, cache=None, readonly=False):
 
         if path is None:
             path = get_env_path()
@@ -29,6 +29,8 @@ class VirtualEnvironment(object):
         self.env = environ.copy()
         if cache is not None:
             self.env['PIP_DOWNLOAD_CACHE'] = os.path.expanduser(os.path.expandvars(cache))
+
+        self.readonly = readonly
 
         # True if the virtual environment has been set up through open_or_create()
         self._ready = False
@@ -63,6 +65,8 @@ class VirtualEnvironment(object):
 
     def _create(self):
         """Executes `virtualenv` to create a new environment."""
+        if self.readonly:
+            raise VirtualenvReadonlyException()
         if self.python is None:
             args = ['virtualenv', self.name]
         else:
@@ -147,6 +151,8 @@ class VirtualEnvironment(object):
         `upgrade` are True, reinstall the package and its dependencies.
         The `options` is a list of strings that can be used to pass to
         pip."""
+        if self.readonly:
+            raise VirtualenvReadonlyException()
         if options is None:
             options = []
         if isinstance(package, tuple):
@@ -191,6 +197,8 @@ class VirtualEnvironment(object):
 
         The `options` is a list of strings that can be used to pass to
         pip."""
+        if self.readonly:
+            raise VirtualenvReadonlyException()
         if options is None:
             options = []
         if isinstance(package, tuple):

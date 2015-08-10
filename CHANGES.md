@@ -1,7 +1,9 @@
 Changes
 =======
 
-* Added support for passing ~ to construct environment (e.g. `~user/venv`)
+* Added `readonly` argument to constructing environment that can be used to prevent
+  operations that could potentially modify the environment (@sjkingo)
+* Added support for passing ~ to construct environment (e.g. `~user/venv`) (@sjkingo)
 
 2.1.6 - 2015-06-10
 
