@@ -233,6 +233,13 @@ class VirtualEnvironment(object):
         if the package is up to date, this command is a no-op."""
         self.install(package, upgrade=True, force=force)
 
+    def upgrade_all(self):
+        """
+        Upgrades all installed packages to their latest versions.
+        """
+        for pkg in self.installed_package_names:
+            self.install(pkg, upgrade=True)
+
     def search(self, term):
         """
         Searches the PyPi repository for the given `term` and returns a

@@ -91,6 +91,12 @@ False
 >>> env.upgrade('django')
 ```
 
+* Upgrade all packages to their latest versions (new in 2.1.7):
+
+```python
+>>> env.upgrade_all()
+```
+
 * Uninstall the `mezzanine` package:
 
 ```python

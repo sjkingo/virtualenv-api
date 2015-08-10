@@ -1,6 +1,9 @@
 Changes
 =======
 
+2.1.7 - 2015-08-10
+
+* Added `upgrade_all()` function to upgrade all packages in an environment (@sjkingo)
 * Added `readonly` argument to constructing environment that can be used to prevent
   operations that could potentially modify the environment (@sjkingo)
 * Added support for passing ~ to construct environment (e.g. `~user/venv`) (@sjkingo)
