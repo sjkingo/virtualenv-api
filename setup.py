@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='virtualenv-api',
-    version='2.1.6',
+    version='2.1.7',
     license='BSD',
     author='Sam Kingston and AUTHORS',
     author_email='sam@sjkwi.com.au',
