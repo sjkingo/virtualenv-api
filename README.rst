@@ -4,7 +4,6 @@ virtualenv-api - an API for virtualenv
 |Build Status|
 |Latest version|
 |BSD License|
-|Stories in Ready|
 
 `virtualenv`_ is a tool to create isolated Python environments. Unfortunately,
 it does not expose a native Python API.  This package aims to provide an API in
@@ -22,8 +21,6 @@ Full support is provided for Python 2.7 and Python 3.3+.
    :target: https://pypi.python.org/pypi/virtualenv-api
 .. |BSD License| image:: https://img.shields.io/pypi/l/virtualenv-api.svg
    :target: https://github.com/sjkingo/virtualenv-api/blob/master/LICENSE
-.. |Stories in Ready| image:: https://badge.waffle.io/sjkingo/virtualenv-api.png?label=ready&title=Ready
-   :target: https://waffle.io/sjkingo/virtualenv-api
 
 
 Installation
