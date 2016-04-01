@@ -1,6 +1,11 @@
 Changes
 =======
 
+2.1.8 - 2016-04-01
+
+* #21: Converted `README.md` to an rST document to remove dependency on
+  `setuptools-markdown` (@sjkingo)
+
 2.1.7 - 2015-08-10
 
 * Added `upgrade_all()` function to upgrade all packages in an environment (@sjkingo)
