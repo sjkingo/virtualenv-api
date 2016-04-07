@@ -10,6 +10,8 @@ setup(
     description='An API for virtualenv/pip',
     long_description='README.rst',
     url='https://github.com/sjkingo/virtualenv-api',
-    install_requires=['six'],
+    install_requires=['six',
+                      'virtualenv'
+                      ],
     packages=find_packages(),
 )
