@@ -44,6 +44,16 @@ class VirtualEnvironment(object):
         return os.path.join('bin', 'pip')
 
     @property
+    def pip_version(self):
+        """Version of installed pip."""
+        if not self._pip_exists:
+            return None
+        if not hasattr(self, '_pip_version'):
+            string_version = self._execute([self._pip_rpath, '-V']).split()[1]
+            self._pip_version = tuple([int(n) for n in string_version.split('.')])
+        return self._pip_version
+
+    @property
     def root(self):
         """The root directory that this virtual environment exists in."""
         return os.path.split(self.path)[0]
@@ -272,8 +282,9 @@ class VirtualEnvironment(object):
         List of all packages that are installed in this environment in
         the format [(name, ver), ..].
         """
+        freeze_options = ['-l', '--all'] if self.pip_version >= (8, 1, 0) else ['-l']
         return list(map(split_package_name, filter(None, self._execute(
-                [self._pip_rpath, 'freeze', '-l']).split(linesep))))
+                [self._pip_rpath, 'freeze'] + freeze_options).split(linesep))))
 
     @property
     def installed_package_names(self):
