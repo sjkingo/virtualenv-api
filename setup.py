@@ -1,9 +1,10 @@
 from setuptools import find_packages, setup
 
+from virtualenvapi import __version__
 
 setup(
     name='virtualenv-api',
-    version='2.1.8',
+    version=__version__,
     license='BSD',
     author='Sam Kingston and AUTHORS',
     author_email='sam@sjkwi.com.au',
