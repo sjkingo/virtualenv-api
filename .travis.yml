@@ -13,7 +13,3 @@ branches:
     only:
         - master
 sudo: false
-addons:
-    apt:
-        packages:
-            - pandoc
