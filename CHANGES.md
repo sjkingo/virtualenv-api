@@ -1,6 +1,12 @@
 Changes
 =======
 
+2.1.9 - 2016-05-01
+
+* Move version number to library instead of `setup.py` (@sjkingo)
+* Support Python 3.5 (@sjkingo)
+* #24: Fixed failing test suite by adding missing dependency (@mcyprian)
+
 2.1.8 - 2016-04-01
 
 * #21: Converted `README.md` to an rST document to remove dependency on
