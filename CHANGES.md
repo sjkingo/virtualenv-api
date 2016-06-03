@@ -1,5 +1,9 @@
 # Changes
 
+## 2.1.10 - 2016-06-03
+
+* #27: Support installing an editable package (`-e`) (@sjkingo)
+
 ## 2.1.9 - 2016-05-01
 
 * Move version number to library instead of `setup.py` (@sjkingo)

@@ -167,8 +167,12 @@ class VirtualEnvironment(object):
             options = []
         if isinstance(package, tuple):
             package = '=='.join(package)
-        if not (force or upgrade) and self.is_installed(package):
-            self._write_to_log('%s is already installed, skipping (use force=True to override)' % package)
+        if package.startswith('-e'):
+            package_args = package.split()
+        else:
+            package_args = [package]
+        if not (force or upgrade) and self.is_installed(package_args[-1]):
+            self._write_to_log('%s is already installed, skipping (use force=True to override)' % package_args[-1])
             return
         if not isinstance(options, list):
             raise ValueError("Options must be a list of strings.")
@@ -179,7 +183,7 @@ class VirtualEnvironment(object):
         elif force:
             options += ['--ignore-installed']
         try:
-            self._execute([self._pip_rpath, 'install', package] + options)
+            self._execute([self._pip_rpath, 'install'] + package_args + options)
         except subprocess.CalledProcessError as e:
             raise PackageInstallationException((e.returncode, e.output, package))
 

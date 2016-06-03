@@ -128,6 +128,15 @@ pip’s package syntax (e.g. ``django==1.4``) or as a tuple of ``('name',
 
     >>> env.install('git+git://github.com/sjkingo/cartridge-payments.git')
 
+*New in 2.1.10:*
+
+-  A package can be installed in pip's *editable* mode by prefixing the package
+   name with `-e` (this is pip's syntax):
+
+.. code:: python
+
+    >>> env.install('-e git+https://github.com/stephenmcd/cartridge.git')
+
 -  Instances of the environment provide an ``installed_packages``
    property:
 
