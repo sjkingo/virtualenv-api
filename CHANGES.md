@@ -1,5 +1,9 @@
 # Changes
 
+## 2.1.11 - 2016-07-14
+
+* #28: Add support for locating pip on win32 (@eoghancunneen)
+
 ## 2.1.10 - 2016-06-03
 
 * #27: Support installing an editable package (`-e`) (@sjkingo)
