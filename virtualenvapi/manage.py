@@ -2,6 +2,7 @@ from os import linesep, environ
 import os.path
 import subprocess
 import six
+import sys
 
 from virtualenvapi.util import split_package_name, to_text, get_env_path, to_ascii
 from virtualenvapi.exceptions import *
@@ -41,6 +42,10 @@ class VirtualEnvironment(object):
     @property
     def _pip_rpath(self):
         """The relative path (from environment root) to pip."""
+        # Windows virtualenv installation installs pip to the [Ss]cripts
+        # folder. Here's a simple check to support:
+        if sys.platform == 'win32':
+            return os.path.join('Scripts', 'pip.exe')
         return os.path.join('bin', 'pip')
 
     @property
