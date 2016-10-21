@@ -114,7 +114,7 @@ class VirtualEnvironment(object):
             prog = args[0]
             if prog[0] != os.sep:
                 prog = os.path.join(self.path, prog)
-            raise OSError('%s: %s' % (prog, six.u(e)))
+            raise OSError('%s: %s' % (prog, six.u(e.message)))
         except subprocess.CalledProcessError as e:
             output, error = e.output
             e.output = output
