@@ -1,5 +1,9 @@
 # Changes
 
+## 2.1.12 - 2016-10-22
+
+* #29: Fix AttributeError when raising OSError from inside environment (@rmb938)
+
 ## 2.1.11 - 2016-07-14
 
 * #28: Add support for locating pip on win32 (@eoghancunneen)
