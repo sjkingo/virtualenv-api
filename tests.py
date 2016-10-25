@@ -120,6 +120,34 @@ class Python3TestCase(BaseTest):
         )
 
 
+class LongPathTestCase(BaseTest):
+
+    def setUp(self):
+        self.env_path = self.setup_env()
+        self.virtual_env_obj = VirtualEnvironment(self.env_path)
+
+    def setup_env(self):
+        env_path = self.env_path
+        if env_path is None:
+            # See: https://github.com/pypa/pip/issues/1773 This test may not be 100% accurate, tips on improving?
+            # Windows and OSX have their own limits so this may not work 100% of the time
+            long_path = "".join([random.choice(string.digits) for _ in range(0, 129)])
+            env_path = tempfile.mkdtemp('test_long_env-'+long_path)
+            virt_env = VirtualEnvironment(env_path)
+            virt_env._create()
+            for pack in packages_for_pre_install:
+                virt_env.install(pack)
+
+        return env_path
+
+    def test_pip_error(self):
+        self.assertRaises(OSError, self.virtual_env_obj._execute_pip, ['-V'], raw_pip=True)
+        try:
+            self.virtual_env_obj._execute_pip(['-V'])
+        except OSError:
+            self.fail("_execute_pip raised OSError unexpectedly")
+
+
 class EnvironmentTest(BaseTest):
 
     def setup_env(self):

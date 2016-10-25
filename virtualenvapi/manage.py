@@ -49,12 +49,21 @@ class VirtualEnvironment(object):
         return os.path.join('bin', 'pip')
 
     @property
+    def _python_rpath(self):
+        """The relative path (from environment root) to python."""
+        # Windows virtualenv installation installs pip to the [Ss]cripts
+        # folder. Here's a simple check to support:
+        if sys.platform == 'win32':
+            return os.path.join('Scripts', 'python.exe')
+        return os.path.join('bin', 'python')
+
+    @property
     def pip_version(self):
         """Version of installed pip."""
         if not self._pip_exists:
             return None
         if not hasattr(self, '_pip_version'):
-            string_version = self._execute([self._pip_rpath, '-V']).split()[1]
+            string_version = self._execute_pip(['-V']).split()[1]
             self._pip_version = tuple([int(n) for n in string_version.split('.')])
         return self._pip_version
 
@@ -94,6 +103,27 @@ class VirtualEnvironment(object):
         self._write_to_log(output, truncate=True)
         self._write_to_error(error, truncate=True)
 
+    def _execute_pip(self, args, raw_pip=False, log=True):
+        """
+        Executes pip commands.
+
+        When raw_pip is True use the pip binary otherwise use "python -m pip".
+        This is to prevent a shebang length issue documented here: https://github.com/pypa/pip/issues/1773
+
+        :param args: Arguments to pass to pip (list[str])
+        :param raw_pip: Use the pip binary [default: False] (boolean)
+        :param log: Log the output to a file [default: True] (boolean)
+        :return: See _execute
+        """
+
+        if raw_pip:
+            exec_args = [self._pip_rpath, '--disable-pip-version-check']
+        else:
+            exec_args = [self._python_rpath, '-m', 'pip', '--disable-pip-version-check']
+
+        exec_args.extend(args)
+        return self._execute(exec_args, log=log)
+
     def _execute(self, args, log=True):
         """Executes the given command inside the environment and returns the output."""
         if not self._ready:
@@ -101,8 +131,6 @@ class VirtualEnvironment(object):
         output = ''
         error = ''
         try:
-            if args[0] == 'pip':
-                args += ['--disable-pip-version-check']
             proc = subprocess.Popen(args, cwd=self.path, env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output, error = proc.communicate()
             returncode = proc.returncode
@@ -114,7 +142,7 @@ class VirtualEnvironment(object):
             prog = args[0]
             if prog[0] != os.sep:
                 prog = os.path.join(self.path, prog)
-            raise OSError('%s: %s' % (prog, six.u(e.message)))
+            raise OSError('%s: %s' % (prog, six.u(str(e))))
         except subprocess.CalledProcessError as e:
             output, error = e.output
             e.output = output
@@ -188,7 +216,7 @@ class VirtualEnvironment(object):
         elif force:
             options += ['--ignore-installed']
         try:
-            self._execute([self._pip_rpath, 'install'] + package_args + options)
+            self._execute_pip(['install'] + package_args + options)
         except subprocess.CalledProcessError as e:
             raise PackageInstallationException((e.returncode, e.output, package))
 
@@ -201,7 +229,7 @@ class VirtualEnvironment(object):
             self._write_to_log('%s is not installed, skipping' % package)
             return
         try:
-            self._execute([self._pip_rpath, 'uninstall', '-y', package])
+            self._execute_pip(['uninstall', '-y', package])
         except subprocess.CalledProcessError as e:
             raise PackageRemovalException((e.returncode, e.output, package))
 
@@ -227,7 +255,7 @@ class VirtualEnvironment(object):
         if not isinstance(options, list):
             raise ValueError("Options must be a list of strings.")
         try:
-            self._execute([self._pip_rpath, 'wheel', package] + options)
+            self._execute_pip(['wheel', package] + options)
         except subprocess.CalledProcessError as e:
             raise PackageWheelException((e.returncode, e.output, package))
 
@@ -267,7 +295,7 @@ class VirtualEnvironment(object):
         New in 2.1.5: returns a dictionary instead of list of tuples
         """
         packages = {}
-        results = self._execute([self._pip_rpath, 'search', term], log=False)  # Don't want to log searches
+        results = self._execute_pip(['search', term], log=False)  # Don't want to log searches
         for result in results.split(linesep):
             try:
                 name, description = result.split(six.u(' - '), 1)
@@ -292,8 +320,8 @@ class VirtualEnvironment(object):
         the format [(name, ver), ..].
         """
         freeze_options = ['-l', '--all'] if self.pip_version >= (8, 1, 0) else ['-l']
-        return list(map(split_package_name, filter(None, self._execute(
-                [self._pip_rpath, 'freeze'] + freeze_options).split(linesep))))
+        return list(map(split_package_name, filter(None, self._execute_pip(
+                ['freeze'] + freeze_options).split(linesep))))
 
     @property
     def installed_package_names(self):
