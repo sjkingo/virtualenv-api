@@ -1,5 +1,9 @@
 # Changes
 
+## 2.1.13 - 2016-10-26
+
+* #31: Workaround to prevent shebang length errors when calling pip (@rmb938)
+
 ## 2.1.12 - 2016-10-22
 
 * #29: Fix AttributeError when raising OSError from inside environment (@rmb938)
