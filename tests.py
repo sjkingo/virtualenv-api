@@ -164,6 +164,22 @@ class EnvironmentTest(BaseTest):
         return env_path
 
 
+class SystemSitePackagesTest(TestCase):
+    """
+    test coverage for using system-site-packages flag
+    """
+    def setUp(self):
+        self.dir = tempfile.mkdtemp()
+
+    def tearDown(self):
+        if os.path.exists(self.dir):
+            shutil.rmtree(self.dir)
+
+    def test_system_site_packages(self):
+        venv = VirtualEnvironment(self.dir, system_site_packages=True)
+        venv._create()
+
+
 if __name__ == '__main__':
     # ToDo refactoring
     if len(sys.argv) == 2 and sys.argv[1].startswith('--env='):

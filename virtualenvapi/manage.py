@@ -10,7 +10,7 @@ from virtualenvapi.exceptions import *
 
 class VirtualEnvironment(object):
 
-    def __init__(self, path=None, python=None, cache=None, readonly=False):
+    def __init__(self, path=None, python=None, cache=None, readonly=False, system_site_packages=False):
 
         if path is None:
             path = get_env_path()
@@ -19,6 +19,7 @@ class VirtualEnvironment(object):
             raise VirtualenvPathNotFound('Path for virtualenv is not define or virtualenv is not activate')
 
         self.python = python
+        self.system_site_packages = system_site_packages
 
         # remove trailing slash so os.path.split() behaves correctly
         if path[-1] == os.path.sep:
@@ -91,10 +92,13 @@ class VirtualEnvironment(object):
         """Executes `virtualenv` to create a new environment."""
         if self.readonly:
             raise VirtualenvReadonlyException()
+        args = ['virtualenv']
+        if self.system_site_packages:
+            args.append('--system-site-packages')
         if self.python is None:
-            args = ['virtualenv', self.name]
+            args.append(self.name)
         else:
-            args = ['virtualenv', '-p', self.python, self.name]
+            args.extend(['-p', self.python, self.name])
         proc = subprocess.Popen(args, cwd=self.root, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, error = proc.communicate()
         returncode = proc.returncode
@@ -234,7 +238,7 @@ class VirtualEnvironment(object):
             raise PackageRemovalException((e.returncode, e.output, package))
 
     def wheel(self, package, options=None):
-        """Creates a wheel of the given package from this virtual environment, 
+        """Creates a wheel of the given package from this virtual environment,
         as specified in pip's package syntax or a tuple of ('name', 'ver'),
         only if it is not already installed. Some valid examples:
 
