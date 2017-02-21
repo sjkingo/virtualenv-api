@@ -7,6 +7,7 @@ from unittest import TestCase
 import unittest
 import sys
 import six
+import subprocess
 from virtualenvapi.manage import VirtualEnvironment
 
 
@@ -167,17 +168,59 @@ class EnvironmentTest(BaseTest):
 class SystemSitePackagesTest(TestCase):
     """
     test coverage for using system-site-packages flag
+
+    setup runs pip freeze against the system python
+    and uses that as a fixture to verify that those
+    packages appear in a clean virtualenv with the
+    system-site-packages flag set.
+
     """
+    @classmethod
+    def _pip_freeze(cls, pip=None):
+        """
+        run pip freeze, defaulting to whatever is system
+        wide, return a parsed list of package names
+
+        """
+        cmd = []
+        if pip is None:
+            cmd.extend(['/usr/bin/env', 'pip'])
+        else:
+            cmd.append(pip)
+        cmd.append('freeze')
+        outp = subprocess.check_output(cmd)
+
+        pkg_name = lambda x: x.split('==', 1)[0]
+
+        packages = [pkg_name(x.strip()) for x in outp.split('\n') if x.strip()]
+        return packages
+
     def setUp(self):
+        """
+        snapshot system package list
+        """
         self.dir = tempfile.mkdtemp()
+        self.system_packages = self._pip_freeze()
 
     def tearDown(self):
         if os.path.exists(self.dir):
             shutil.rmtree(self.dir)
 
     def test_system_site_packages(self):
+        """
+        test that creating a venv with system_site_packages=True
+        results in a venv that contains the system python packages
+
+        """
         venv = VirtualEnvironment(self.dir, system_site_packages=True)
         venv._create()
+        venv_pip = os.path.join(venv.path, venv._pip_rpath)
+        venv_packages = self._pip_freeze(venv_pip)
+        for package in self.system_packages:
+            self.failUnless(
+                package in venv_packages,
+                "Expected {} in venv package".format(package)
+            )
 
 
 if __name__ == '__main__':
