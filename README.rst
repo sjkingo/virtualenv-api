@@ -46,8 +46,7 @@ Alternatively, you may fetch the latest version from git:
 Usage
 -----
 
--  To begin managing an environment (it will be created if it does not
-   exist):
+To begin managing an environment (it will be created if it does not exist):
 
 .. code:: python
 
@@ -61,13 +60,12 @@ call ``VirtualEnvironment`` without the path argument:
 
     env = VirtualEnvironment()
 
-The `VirtualEnvironment` constructor takes some optional arguments:
+The `VirtualEnvironment` constructor takes some optional arguments (their defaults are shown below):
 
-* ``python`` (default: ``None``) - specify the Python interpreter to use. Defaults
-  to the default system interpreter *(new in 2.1.3)*
-* ``cache`` (default: ``None``) - existing directory to override the default pip download cache
-* ``readonly`` (default: ``False``) - prevent all operations that could potentially modify the environment *(new in 2.1.7)*
-* ``system_site_packages`` (default: ``False``) - include system site packages in operations on the environment *(new in 2.1.14)*
+* ``python=None`` - specify the Python interpreter to use. Defaults to the default system interpreter *(new in 2.1.3)*
+* ``cache=None`` - existing directory to override the default pip download cache
+* ``readonly=False`` - prevent all operations that could potentially modify the environment *(new in 2.1.7)*
+* ``system_site_packages=False`` - include system site packages in operations on the environment *(new in 2.1.14)*
 
 Operations
 ----------
