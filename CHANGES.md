@@ -1,5 +1,9 @@
 # Changes
 
+## 2.1.14 - 2017-02-22
+
+* #33: Add support for `system-site-packages` option (@evansde77)
+
 ## 2.1.13 - 2016-10-26
 
 * #31: Workaround to prevent shebang length errors when calling pip (@rmb938)
