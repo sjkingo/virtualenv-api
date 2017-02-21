@@ -43,8 +43,8 @@ Alternatively, you may fetch the latest version from git:
 
 .. _PyPi: https://pypi.python.org/pypi/virtualenv-api
 
-Examples
---------
+Usage
+-----
 
 -  To begin managing an environment (it will be created if it does not
    exist):
@@ -54,24 +54,25 @@ Examples
     from virtualenvapi.manage import VirtualEnvironment
     env = VirtualEnvironment('/path/to/environment/name')
 
-You may also specify the Python interpreter to use in this environment by
-passing the ``python`` argument to the class constructor (new in 2.1.3):
-
-.. code:: python
-
-    env = VirtualEnvironment('/path/to/environment/name', python='python3')
-
 If you have already activated a virtualenv and wish to operate on it, simply
-call ``VirtualEnvironment`` with no arguments:
+call ``VirtualEnvironment`` without the path argument:
 
 .. code:: python
 
     env = VirtualEnvironment()
 
-*New in 2.1.7:*
+The `VirtualEnvironment` constructor takes some optional arguments:
 
-An optional argument ``readonly`` may be provided (defaults to ``False``) that
-will prevent all operations that could potentially modify the environment.
+* `python` (default: `None`) - specify the Python interpreter to use. Defaults
+  to the default system interpreter *(new in 2.1.3)*
+* `cache` (default: `None`) - existing directory to override the default pip download cache
+* `readonly` (default: `False`) - prevent all operations that could potentially modify the environment *(new in 2.1.7)*
+* `system_site_packages` (default: `False`) - include system site packages in operations on the environment *(new in 2.1.14)*
+
+Operations
+----------
+
+Once you have a `VirtualEnvironment` object, you can perform operations on it.
 
 -  Check if the ``mezzanine`` package is installed:
 
