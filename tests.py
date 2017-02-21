@@ -164,6 +164,60 @@ class EnvironmentTest(BaseTest):
         return env_path
 
 
+class SystemSitePackagesTest(TestCase):
+    """
+    test coverage for using system-site-packages flag
+
+    This verifies the presence of the no-global-site-packages
+    file in the venv for non-system packages venv and
+    verified it is not present for the true case
+
+    """
+    def setUp(self):
+        """
+        snapshot system package list
+        """
+        self.dir = tempfile.mkdtemp()
+        self.no_global = (
+            "lib/python{}.{}"
+            "/no-global-site-packages.txt"
+        ).format(
+            sys.version_info.major,
+            sys.version_info.minor
+        )
+
+    def tearDown(self):
+        if os.path.exists(self.dir):
+            shutil.rmtree(self.dir)
+
+    def test_system_site_packages(self):
+        """
+        test that creating a venv with system_site_packages=True
+        results in a venv that does not contain the no-global-site-packages file
+
+        """
+        venv = VirtualEnvironment(self.dir, system_site_packages=True)
+        venv._create()
+        expected = os.path.join(venv.path, self.no_global)
+        self.assertTrue(
+            not os.path.exists(expected)
+        )
+
+    def test_no_system_site_packages(self):
+        """
+        test that creating a venv with system_site_packages=False
+        results in a venv that contains the no-global-site-packages
+        file
+
+        """
+        venv = VirtualEnvironment(self.dir)
+        venv._create()
+        expected = os.path.join(venv.path, self.no_global)
+        self.assertTrue(
+            os.path.exists(expected)
+        )
+
+
 if __name__ == '__main__':
     # ToDo refactoring
     if len(sys.argv) == 2 and sys.argv[1].startswith('--env='):
