@@ -63,11 +63,11 @@ call ``VirtualEnvironment`` without the path argument:
 
 The `VirtualEnvironment` constructor takes some optional arguments:
 
-* `python` (default: `None`) - specify the Python interpreter to use. Defaults
+* ``python`` (default: ``None``) - specify the Python interpreter to use. Defaults
   to the default system interpreter *(new in 2.1.3)*
-* `cache` (default: `None`) - existing directory to override the default pip download cache
-* `readonly` (default: `False`) - prevent all operations that could potentially modify the environment *(new in 2.1.7)*
-* `system_site_packages` (default: `False`) - include system site packages in operations on the environment *(new in 2.1.14)*
+* ``cache`` (default: ``None``) - existing directory to override the default pip download cache
+* ``readonly`` (default: ``False``) - prevent all operations that could potentially modify the environment *(new in 2.1.7)*
+* ``system_site_packages`` (default: ``False``) - include system site packages in operations on the environment *(new in 2.1.14)*
 
 Operations
 ----------
