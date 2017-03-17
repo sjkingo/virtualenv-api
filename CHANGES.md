@@ -1,5 +1,12 @@
 # Changes
 
+## 2.1.16 - 2017-03-17
+
+* Fix bug in test script where temporary directories were not being removed (@sjkingo)
+* #35: Don't pass unsupported argument to old versions of pip (@sjkingo)
+* Always call pip through the Python interpreter to avoid a too-long shebang error (@sjkingo)
+* #26: Fix incorrect subclassing of base test class that was causing extreme test durations (@sjkingo)
+
 ## 2.1.15 - 2017-03-17
 
 * #34: Add support for `pip -r` requirements files (@jzafran and @sjkingo)
