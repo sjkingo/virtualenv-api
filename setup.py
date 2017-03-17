@@ -11,9 +11,7 @@ setup(
     description='An API for virtualenv/pip',
     long_description=open('README.rst', 'r').read(),
     url='https://github.com/sjkingo/virtualenv-api',
-    install_requires=['six',
-                      'virtualenv'
-                      ],
+    install_requires=['six'],
     packages=find_packages(),
     classifiers=[
         'Development Status :: 5 - Production/Stable',
