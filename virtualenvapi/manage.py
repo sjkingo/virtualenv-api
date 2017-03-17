@@ -41,13 +41,11 @@ class VirtualEnvironment(object):
         return six.u(self.path)
 
     @property
-    def _pip_rpath(self):
-        """The relative path (from environment root) to pip."""
-        # Windows virtualenv installation installs pip to the [Ss]cripts
-        # folder. Here's a simple check to support:
-        if sys.platform == 'win32':
-            return os.path.join('Scripts', 'pip.exe')
-        return os.path.join('bin', 'pip')
+    def _pip(self):
+        """The arguments used to call pip."""
+        # pip is called using the python interpreter to get around a long path
+        # issue detailed in https://github.com/sjkingo/virtualenv-api/issues/30
+        return [self._python_rpath, '-m', 'pip']
 
     @property
     def _python_rpath(self):
@@ -64,8 +62,9 @@ class VirtualEnvironment(object):
         if not self._pip_exists:
             return None
         if not hasattr(self, '_pip_version'):
-            string_version = self._execute_pip(['-V']).split()[1]
-            self._pip_version = tuple([int(n) for n in string_version.split('.')])
+            # don't call `self._execute_pip` here as that method calls this one
+            output = self._execute(self._pip + ['-V'], log=False).split()[1]
+            self._pip_version = tuple([int(n) for n in output.split('.')])
         return self._pip_version
 
     @property
@@ -107,23 +106,22 @@ class VirtualEnvironment(object):
         self._write_to_log(output, truncate=True)
         self._write_to_error(error, truncate=True)
 
-    def _execute_pip(self, args, raw_pip=False, log=True):
+    def _execute_pip(self, args, log=True):
         """
         Executes pip commands.
 
-        When raw_pip is True use the pip binary otherwise use "python -m pip".
-        This is to prevent a shebang length issue documented here: https://github.com/pypa/pip/issues/1773
-
         :param args: Arguments to pass to pip (list[str])
-        :param raw_pip: Use the pip binary [default: False] (boolean)
         :param log: Log the output to a file [default: True] (boolean)
         :return: See _execute
         """
 
-        if raw_pip:
-            exec_args = [self._pip_rpath, '--disable-pip-version-check']
-        else:
-            exec_args = [self._python_rpath, '-m', 'pip', '--disable-pip-version-check']
+        # Copy the pip calling arguments so they can be extended
+        exec_args = list(self._pip)
+
+        # Older versions of pip don't support the version check argument.
+        # Fixes https://github.com/sjkingo/virtualenv-api/issues/35
+        if self.pip_version[0] >= 6:
+            exec_args.append('--disable-pip-version-check')
 
         exec_args.extend(args)
         return self._execute(exec_args, log=log)
@@ -174,7 +172,7 @@ class VirtualEnvironment(object):
     def _pip_exists(self):
         """Returns True if pip exists inside the virtual environment. Can be
         used as a naive way to verify that the environment is installed."""
-        return os.path.isfile(os.path.join(self.path, self._pip_rpath))
+        return os.path.isfile(os.path.join(self.path, 'bin', 'pip'))
 
     def open_or_create(self):
         """Attempts to open the virtual environment or creates it if it

@@ -147,7 +147,9 @@ class LongPathTestCase(TestBase):
         return env_path
 
     def test_pip_error(self):
-        self.assertRaises(OSError, self.virtual_env_obj._execute_pip, ['-V'], raw_pip=True)
+        # Calling pip directly invokes a possibly too-long shebang which will cause an
+        # OSError. See https://github.com/sjkingo/virtualenv-api/issues/30
+        self.assertRaises(OSError, self.virtual_env_obj._execute, os.path.join('bin', 'pip'), ['-V'])
         try:
             self.virtual_env_obj._execute_pip(['-V'])
         except OSError:
