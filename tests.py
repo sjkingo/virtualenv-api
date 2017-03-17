@@ -34,21 +34,12 @@ def which(program):
 class TestBase(TestCase):
     env_path = None
 
-    def setup_env(self):
-        env_path = self.env_path
-        if env_path is None:
-            env_path = tempfile.mkdtemp('test_env')
-            virt_env = VirtualEnvironment(env_path)
-            virt_env._create()
-
-        return env_path
-
     def setUp(self):
-        self.env_path = self.setup_env()
+        self.env_path = tempfile.mkdtemp()
         self.virtual_env_obj = VirtualEnvironment(self.env_path)
 
     def tearDown(self):
-        if os.path.exists(self.env_path) and self.__class__.env_path is None:
+        if os.path.exists(self.env_path):
             shutil.rmtree(self.env_path)
 
     def _install_packages(self, packages):
@@ -66,14 +57,12 @@ class InstalledTestCase(TestBase):
         self.assertFalse(self.virtual_env_obj.is_installed(''.join(random.sample(string.ascii_letters, 30))))
 
     def test_install(self):
-        self._uninstall_packages(packages_for_tests)
         for pack in packages_for_tests:
             self.virtual_env_obj.install(pack)
             self.assertTrue(self.virtual_env_obj.is_installed(pack))
 
     def test_install_requirements(self):
         """test installing Python packages from a pip requirements file"""
-        self._uninstall_packages(packages_for_tests)
 
         # create a temporary requirements.txt file with some packages
         with tempfile.NamedTemporaryFile('w') as tmp_requirements_file:
@@ -119,7 +108,7 @@ class SearchTestCase(TestBase):
 class Python3TestCase(TestBase):
 
     def setUp(self):
-        self.env_path = self.setup_env()
+        self.env_path = tempfile.mkdtemp()
         self.python = which('python')
         self.assertIsNotNone(self.python)
         self.virtual_env_obj = VirtualEnvironment(self.env_path, python=self.python)
@@ -133,22 +122,19 @@ class Python3TestCase(TestBase):
 
 
 class LongPathTestCase(TestBase):
+    """
+    Verify that environments that have extremely long paths can be managed.
+    See https://github.com/sjkingo/virtualenv-api/issues/30 for more details.
+    """
 
-    def setup_env(self):
-        env_path = self.env_path
-        if env_path is None:
-            # See: https://github.com/pypa/pip/issues/1773 This test may not be 100% accurate, tips on improving?
-            # Windows and OSX have their own limits so this may not work 100% of the time
-            long_path = "".join([random.choice(string.digits) for _ in range(0, 129)])
-            env_path = tempfile.mkdtemp('test_long_env-'+long_path)
-            virt_env = VirtualEnvironment(env_path)
-            virt_env._create()
-
-        return env_path
+    def setUp(self):
+        # See: https://github.com/pypa/pip/issues/1773 This test may not be 100% accurate, tips on improving?
+        # Windows and OSX have their own limits so this may not work 100% of the time
+        long_path = "".join([random.choice(string.digits) for _ in range(0, 129)])
+        self.env_path = tempfile.mkdtemp(long_path)
+        self.virtual_env_obj = VirtualEnvironment(self.env_path)
 
     def test_pip_error(self):
-        # Calling pip directly invokes a possibly too-long shebang which will cause an
-        # OSError. See https://github.com/sjkingo/virtualenv-api/issues/30
         self.assertRaises(OSError, self.virtual_env_obj._execute, os.path.join('bin', 'pip'), ['-V'])
         try:
             self.virtual_env_obj._execute_pip(['-V'])
