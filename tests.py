@@ -76,7 +76,7 @@ class BaseTest(TestCase):
         self._uninstall_packages(packages_for_tests)
 
         # create a temporary requirements.txt file with some packages
-        with tempfile.NamedTemporaryFile(delete=False) as tmp_requirements_file:
+        with tempfile.NamedTemporaryFile('w', delete=False) as tmp_requirements_file:
             tmp_requirements_file.write('\n'.join(packages_for_tests))
             tmp_requirements_file_path = tmp_requirements_file.name
 
