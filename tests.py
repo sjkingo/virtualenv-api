@@ -142,22 +142,6 @@ class LongPathTestCase(TestBase):
             self.fail("_execute_pip raised OSError unexpectedly")
 
 
-class EnvironmentTest(TestBase):
-
-    def setup_env(self):
-        act_filename = 'activate_this.py'
-        env_path = super(EnvironmentTest, self).setup_env()
-        act_path = os.path.join(env_path, 'bin', act_filename)
-        if six.PY2:
-            execfile(act_path, dict(__file__=act_path))
-        elif six.PY3:
-            with open(act_path, "r") as fh:
-                exec(fh.read())
-        else:
-            raise EnvironmentError('Unknown version of python')
-        return env_path
-
-
 class SystemSitePackagesTest(TestCase):
     """
     test coverage for using system-site-packages flag
@@ -213,10 +197,4 @@ class SystemSitePackagesTest(TestCase):
 
 
 if __name__ == '__main__':
-    # ToDo refactoring
-    if len(sys.argv) == 2 and sys.argv[1].startswith('--env='):
-        env_path = sys.argv[1].split('=', 1)[-1]
-        BaseTest.env_path = env_path
-        sys.argv = sys.argv[:1]
-
     unittest.main()
