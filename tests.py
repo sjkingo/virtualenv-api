@@ -10,8 +10,7 @@ import six
 from virtualenvapi.manage import VirtualEnvironment
 
 
-packages_for_pre_install = ['pep8', 'wheel']
-packages_for_tests = ['flask', 'git+git://github.com/sjkingo/django_auth_ldap3.git']
+packages_for_tests = ['pep8', 'wheel']
 
 
 def which(program):
@@ -32,14 +31,8 @@ def which(program):
                 return exe_file
     return None
 
-
-class BaseTest(TestCase):
-
+class TestBase(TestCase):
     env_path = None
-
-    def setUp(self):
-        self.env_path = self.setup_env()
-        self.virtual_env_obj = VirtualEnvironment(self.env_path)
 
     def setup_env(self):
         env_path = self.env_path
@@ -47,10 +40,16 @@ class BaseTest(TestCase):
             env_path = tempfile.mkdtemp('test_env')
             virt_env = VirtualEnvironment(env_path)
             virt_env._create()
-            for pack in packages_for_pre_install:
-                virt_env.install(pack)
 
         return env_path
+
+    def setUp(self):
+        self.env_path = self.setup_env()
+        self.virtual_env_obj = VirtualEnvironment(self.env_path)
+
+    def tearDown(self):
+        if os.path.exists(self.env_path) and self.__class__.env_path is None:
+            shutil.rmtree(self.env_path)
 
     def _install_packages(self, packages):
         for pack in packages:
@@ -60,9 +59,10 @@ class BaseTest(TestCase):
         for pack in packages:
             self.virtual_env_obj.uninstall(pack)
 
+
+class InstalledTestCase(TestBase):
+
     def test_installed(self):
-        for pack in packages_for_pre_install:
-            self.assertTrue(self.virtual_env_obj.is_installed(pack))
         self.assertFalse(self.virtual_env_obj.is_installed(''.join(random.sample(string.ascii_letters, 30))))
 
     def test_install(self):
@@ -98,6 +98,9 @@ class BaseTest(TestCase):
             self.virtual_env_obj.install(pack, options=['--no-index', '--find-links=/tmp/wheelhouse', '--use-wheel'])
             self.assertTrue(self.virtual_env_obj.is_installed(pack))
 
+
+class SearchTestCase(TestBase):
+
     def test_search(self):
         pack = packages_for_tests[0].lower()
         result = self.virtual_env_obj.search(pack)
@@ -112,12 +115,8 @@ class BaseTest(TestCase):
         self.assertIsInstance(result, list)
         self.assertIn(pack, [k.split(' (')[0].lower() for k in result])
 
-    def tearDown(self):
-        if os.path.exists(self.env_path) and self.__class__.env_path is None:
-            shutil.rmtree(self.env_path)
 
-
-class Python3TestCase(BaseTest):
+class Python3TestCase(TestBase):
 
     def setUp(self):
         self.env_path = self.setup_env()
@@ -133,11 +132,7 @@ class Python3TestCase(BaseTest):
         )
 
 
-class LongPathTestCase(BaseTest):
-
-    def setUp(self):
-        self.env_path = self.setup_env()
-        self.virtual_env_obj = VirtualEnvironment(self.env_path)
+class LongPathTestCase(TestBase):
 
     def setup_env(self):
         env_path = self.env_path
@@ -148,8 +143,6 @@ class LongPathTestCase(BaseTest):
             env_path = tempfile.mkdtemp('test_long_env-'+long_path)
             virt_env = VirtualEnvironment(env_path)
             virt_env._create()
-            for pack in packages_for_pre_install:
-                virt_env.install(pack)
 
         return env_path
 
@@ -161,7 +154,7 @@ class LongPathTestCase(BaseTest):
             self.fail("_execute_pip raised OSError unexpectedly")
 
 
-class EnvironmentTest(BaseTest):
+class EnvironmentTest(TestBase):
 
     def setup_env(self):
         act_filename = 'activate_this.py'
