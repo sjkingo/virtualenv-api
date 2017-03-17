@@ -2,19 +2,15 @@ import os
 import random
 import shutil
 import string
-import tempfile
-from unittest import TestCase
-import unittest
 import sys
-import six
+import tempfile
+import unittest
+
 from virtualenvapi.manage import VirtualEnvironment
 
-
-packages_for_tests = ['pep8', 'wheel']
-
+packages_for_tests = ['pep8']
 
 def which(program):
-
     def is_exe(fpath):
         return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
@@ -29,9 +25,15 @@ def which(program):
             exe_file = os.path.join(path, program)
             if is_exe(exe_file):
                 return exe_file
+
     return None
 
-class TestBase(TestCase):
+
+class TestBase(unittest.TestCase):
+    """
+    Base class for test cases to inherit from.
+    """
+
     env_path = None
 
     def setUp(self):
@@ -52,6 +54,9 @@ class TestBase(TestCase):
 
 
 class InstalledTestCase(TestBase):
+    """
+    Test install/uninstall operations.
+    """
 
     def test_installed(self):
         self.assertFalse(self.virtual_env_obj.is_installed(''.join(random.sample(string.ascii_letters, 30))))
@@ -82,6 +87,7 @@ class InstalledTestCase(TestBase):
             self.assertFalse(self.virtual_env_obj.is_installed(pack))
 
     def test_wheel(self):
+        self.virtual_env_obj.install('wheel') # required for this test
         for pack in packages_for_tests:
             self.virtual_env_obj.wheel(pack, options=['--wheel-dir=/tmp/wheelhouse'])
             self.virtual_env_obj.install(pack, options=['--no-index', '--find-links=/tmp/wheelhouse', '--use-wheel'])
@@ -89,6 +95,9 @@ class InstalledTestCase(TestBase):
 
 
 class SearchTestCase(TestBase):
+    """
+    Test pip search.
+    """
 
     def test_search(self):
         pack = packages_for_tests[0].lower()
@@ -105,7 +114,10 @@ class SearchTestCase(TestBase):
         self.assertIn(pack, [k.split(' (')[0].lower() for k in result])
 
 
-class Python3TestCase(TestBase):
+class PythonArgumentTestCase(TestBase):
+    """
+    Test passing a different interpreter path to `VirtualEnvironment` (`virtualenv -p`).
+    """
 
     def setUp(self):
         self.env_path = tempfile.mkdtemp()
@@ -142,7 +154,7 @@ class LongPathTestCase(TestBase):
             self.fail("_execute_pip raised OSError unexpectedly")
 
 
-class SystemSitePackagesTest(TestCase):
+class SystemSitePackagesTest(unittest.TestCase):
     """
     test coverage for using system-site-packages flag
 
