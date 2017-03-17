@@ -1,5 +1,9 @@
 # Changes
 
+## 2.1.15 - 2017-03-17
+
+* #34: Add support for `pip -r` requirements files (@jzafran and @sjkingo)
+
 ## 2.1.14 - 2017-02-22
 
 * #33: Add support for `system-site-packages` option (@evansde77)

@@ -136,8 +136,10 @@ pip’s package syntax (e.g. ``django==1.4``) or as a tuple of ``('name',
 
     >>> env.install('-e git+https://github.com/stephenmcd/cartridge.git')
 
-- Packages in a pip requirements file can be installed by prefixing the
-  requirements file path with `-r`:
+*New in 2.1.15:*
+
+-  Packages in a pip requirements file can be installed by prefixing the
+   requirements file path with `-r`:
 
 .. code:: python
 
