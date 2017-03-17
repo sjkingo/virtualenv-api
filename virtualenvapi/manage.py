@@ -192,6 +192,8 @@ class VirtualEnvironment(object):
          'Django'
          'Django==1.5'
          ('Django', '1.5')
+         '-e .'
+         '-r requirements.txt'
 
         If `force` is True, force an installation. If `upgrade` is True,
         attempt to upgrade the package in question. If both `force` and
@@ -204,11 +206,11 @@ class VirtualEnvironment(object):
             options = []
         if isinstance(package, tuple):
             package = '=='.join(package)
-        if package.startswith('-e'):
+        if package.startswith(('-e', '-r')):
             package_args = package.split()
         else:
             package_args = [package]
-        if not (force or upgrade) and self.is_installed(package_args[-1]):
+        if not (force or upgrade) and (package_args[0] != '-r' and self.is_installed(package_args[-1])):
             self._write_to_log('%s is already installed, skipping (use force=True to override)' % package_args[-1])
             return
         if not isinstance(options, list):

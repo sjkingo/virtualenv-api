@@ -71,6 +71,19 @@ class BaseTest(TestCase):
             self.virtual_env_obj.install(pack)
             self.assertTrue(self.virtual_env_obj.is_installed(pack))
 
+    def test_install_requirements(self):
+        """test installing Python packages from a pip requirements file"""
+        self._uninstall_packages(packages_for_tests)
+
+        # create a temporary requirements.txt file with some packages
+        with tempfile.NamedTemporaryFile('w') as tmp_requirements_file:
+            tmp_requirements_file.write('\n'.join(packages_for_tests))
+            tmp_requirements_file.flush()
+
+            self.virtual_env_obj.install('-r {}'.format(tmp_requirements_file.name))
+            for pack in packages_for_tests:
+                self.assertTrue(self.virtual_env_obj.is_installed(pack))
+
     def test_uninstall(self):
         self._install_packages(packages_for_tests)
         for pack in packages_for_tests:
