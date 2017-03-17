@@ -5,7 +5,8 @@ python:
   - "3.5"
   - "3.6"
 install: 
-    - pip install -q -U pip six
+    - pip install -U pip six virtualenv
+    - pip freeze
 script: python tests.py
 branches:
     only:
