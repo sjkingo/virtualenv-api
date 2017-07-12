@@ -177,6 +177,6 @@ pip’s package syntax (e.g. ``django==1.4``) or as a tuple of ``('name',
     >>> list(env.search('requests').items())
     [('virtualenv-api', 'An API for virtualenv/pip')]
 
-Verbose output from each command is available in the environment’s
+Verbose output from each command is available in the environment's
 ``build.log`` file, which is appended to with each operation. Any errors are
 logged to ``build.err``.
