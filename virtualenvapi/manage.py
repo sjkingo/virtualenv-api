@@ -45,16 +45,19 @@ class VirtualEnvironment(object):
         """The arguments used to call pip."""
         # pip is called using the python interpreter to get around a long path
         # issue detailed in https://github.com/sjkingo/virtualenv-api/issues/30
-        return [self._python_rpath, '-m', 'pip']
+        return [self._python_bin_name, '-m', 'pip']
 
     @property
-    def _python_rpath(self):
-        """The relative path (from environment root) to python."""
-        # Windows virtualenv installation installs pip to the [Ss]cripts
-        # folder. Here's a simple check to support:
-        if sys.platform == 'win32':
-            return os.path.join('Scripts', 'python.exe')
-        return os.path.join('bin', 'python')
+    def _bin_folder_name(self):
+        return 'Scripts' if sys.platform == 'win32' else 'bin'
+
+    @property
+    def _bin_path(self):
+        return os.path.join(self.path, self._bin_folder_name)
+
+    @property
+    def _python_bin_name(self):
+        return 'python.exe' if sys.platform == 'win32' else 'python'
 
     @property
     def pip_version(self):
@@ -132,8 +135,9 @@ class VirtualEnvironment(object):
             self.open_or_create()
         output = ''
         error = ''
+
         try:
-            proc = subprocess.Popen(args, cwd=self.path, env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            proc = subprocess.Popen(args, cwd=self._bin_path, env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output, error = proc.communicate()
             returncode = proc.returncode
             if returncode:
