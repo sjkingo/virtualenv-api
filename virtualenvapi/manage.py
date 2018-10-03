@@ -45,7 +45,7 @@ class VirtualEnvironment(object):
         """The arguments used to call pip."""
         # pip is called using the python interpreter to get around a long path
         # issue detailed in https://github.com/sjkingo/virtualenv-api/issues/30
-        return [self._python_bin_name, '-m', 'pip']
+        return [self._python_bin_path, '-m', 'pip']
 
     @property
     def _bin_folder_name(self):
@@ -58,6 +58,10 @@ class VirtualEnvironment(object):
     @property
     def _python_bin_name(self):
         return 'python.exe' if sys.platform == 'win32' else 'python'
+
+    @property
+    def _python_bin_path(self):
+        return os.path.join(self._bin_path, self._python_bin_name)
 
     @property
     def pip_version(self):
