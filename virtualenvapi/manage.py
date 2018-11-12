@@ -276,7 +276,7 @@ class VirtualEnvironment(object):
         if pkg_tuple[1] is not None:
             return pkg_tuple in self.installed_packages
         else:
-            return pkg_tuple[0] in self.installed_package_names
+            return pkg_tuple[0].lower() in self.installed_package_names
 
     def upgrade(self, package, force=False):
         """Shortcut method to upgrade a package. If `force` is set to True,
