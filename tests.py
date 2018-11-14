@@ -90,7 +90,7 @@ class InstalledTestCase(TestBase):
         self.virtual_env_obj.install('wheel') # required for this test
         for pack in packages_for_tests:
             self.virtual_env_obj.wheel(pack, options=['--wheel-dir=/tmp/wheelhouse'])
-            self.virtual_env_obj.install(pack, options=['--no-index', '--find-links=/tmp/wheelhouse', '--use-wheel'])
+            self.virtual_env_obj.install(pack, options=['--no-index', '--find-links=/tmp/wheelhouse'])
             self.assertTrue(self.virtual_env_obj.is_installed(pack))
 
 
