@@ -12,7 +12,7 @@ the form of a wrapper around virtualenv.
 It can be used to create and delete environments and perform package management
 inside the environment.
 
-Full support is provided for Python 2.7, 3.4, 3.5 and 3.6.
+Full support is provided for all supported versions of Python.
 
 .. _virtualenv: http://www.virtualenv.org/
 .. |Build Status| image:: https://travis-ci.org/sjkingo/virtualenv-api.svg

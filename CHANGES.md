@@ -1,5 +1,9 @@
 # Changes
 
+## 2.1.17 - 2018-11-15
+
+* Support Python 3.7 (@sjkingo)
+
 ## 2.1.16 - 2017-03-17
 
 * Fix bug in test script where temporary directories were not being removed (@sjkingo)
