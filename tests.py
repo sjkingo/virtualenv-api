@@ -90,7 +90,7 @@ class InstalledTestCase(TestBase):
         self.virtual_env_obj.install('wheel') # required for this test
         for pack in packages_for_tests:
             self.virtual_env_obj.wheel(pack, options=['--wheel-dir=/tmp/wheelhouse'])
-            self.virtual_env_obj.install(pack, options=['--no-index', '--find-links=/tmp/wheelhouse', '--use-wheel'])
+            self.virtual_env_obj.install(pack, options=['--no-index', '--find-links=/tmp/wheelhouse'])
             self.assertTrue(self.virtual_env_obj.is_installed(pack))
 
 
@@ -131,27 +131,6 @@ class PythonArgumentTestCase(TestBase):
             os.path.dirname(self.python),
             os.path.dirname(which('pip'))
         )
-
-
-class LongPathTestCase(TestBase):
-    """
-    Verify that environments that have extremely long paths can be managed.
-    See https://github.com/sjkingo/virtualenv-api/issues/30 for more details.
-    """
-
-    def setUp(self):
-        # See: https://github.com/pypa/pip/issues/1773 This test may not be 100% accurate, tips on improving?
-        # Windows and OSX have their own limits so this may not work 100% of the time
-        long_path = "".join([random.choice(string.digits) for _ in range(0, 129)])
-        self.env_path = tempfile.mkdtemp(long_path)
-        self.virtual_env_obj = VirtualEnvironment(self.env_path)
-
-    def test_pip_error(self):
-        self.assertRaises(OSError, self.virtual_env_obj._execute, os.path.join('bin', 'pip'), ['-V'])
-        try:
-            self.virtual_env_obj._execute_pip(['-V'])
-        except OSError:
-            self.fail("_execute_pip raised OSError unexpectedly")
 
 
 class SystemSitePackagesTest(unittest.TestCase):
