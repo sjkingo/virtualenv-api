@@ -2,6 +2,8 @@
 
 ## 2.1.17 - 2018-11-15
 
+* #40: Fix for test cases failing (@irvinlim)
+* #39: Fix for `is_installed` not handling capitilized names properly (@irvinlim)
 * Support Python 3.7 (@sjkingo)
 
 ## 2.1.16 - 2017-03-17
