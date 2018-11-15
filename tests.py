@@ -9,6 +9,8 @@ import unittest
 from virtualenvapi.manage import VirtualEnvironment
 
 packages_for_tests = ['pep8']
+non_lowercase_packages_for_test = ['Pillow']
+all_packages_for_tests = packages_for_tests + non_lowercase_packages_for_test
 
 def which(program):
     def is_exe(fpath):
@@ -62,7 +64,7 @@ class InstalledTestCase(TestBase):
         self.assertFalse(self.virtual_env_obj.is_installed(''.join(random.sample(string.ascii_letters, 30))))
 
     def test_install(self):
-        for pack in packages_for_tests:
+        for pack in all_packages_for_tests:
             self.virtual_env_obj.install(pack)
             self.assertTrue(self.virtual_env_obj.is_installed(pack))
 
@@ -79,8 +81,8 @@ class InstalledTestCase(TestBase):
                 self.assertTrue(self.virtual_env_obj.is_installed(pack))
 
     def test_uninstall(self):
-        self._install_packages(packages_for_tests)
-        for pack in packages_for_tests:
+        self._install_packages(all_packages_for_tests)
+        for pack in all_packages_for_tests:
             if pack.endswith('.git'):
                 pack = pack.split('/')[-1].replace('.git', '')
             self.virtual_env_obj.uninstall(pack)
@@ -100,18 +102,18 @@ class SearchTestCase(TestBase):
     """
 
     def test_search(self):
-        pack = packages_for_tests[0].lower()
-        result = self.virtual_env_obj.search(pack)
-        self.assertIsInstance(result, dict)
-        self.assertTrue(bool(result))
-        if result:
-            self.assertIn(pack, [k.split(' (')[0].lower() for k in result.keys()])
+        for pack in all_packages_for_tests:
+            result = self.virtual_env_obj.search(pack)
+            self.assertIsInstance(result, dict)
+            self.assertTrue(bool(result))
+            if result:
+                self.assertIn(pack.lower(), [k.split(' (')[0].lower() for k in result.keys()])
 
     def test_search_names(self):
-        pack = packages_for_tests[0].lower()
-        result = self.virtual_env_obj.search_names(pack)
-        self.assertIsInstance(result, list)
-        self.assertIn(pack, [k.split(' (')[0].lower() for k in result])
+        for pack in all_packages_for_tests:
+            result = self.virtual_env_obj.search_names(pack)
+            self.assertIsInstance(result, list)
+            self.assertIn(pack.lower(), [k.split(' (')[0].lower() for k in result])
 
 
 class PythonArgumentTestCase(TestBase):
