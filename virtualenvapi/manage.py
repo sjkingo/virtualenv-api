@@ -29,6 +29,11 @@ class VirtualEnvironment(object):
         self.path = os.path.abspath(os.path.expanduser(path))
 
         self.env = environ.copy()
+
+        # Blacklist environment variables that will break pip in virtualenvs
+        # See https://github.com/pypa/virtualenv/issues/845
+        self.env.pop('__PYVENV_LAUNCHER__', None)
+
         if cache is not None:
             self.env['PIP_DOWNLOAD_CACHE'] = os.path.expanduser(os.path.expandvars(cache))
 
