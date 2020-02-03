@@ -1,5 +1,10 @@
 # Changes
 
+## 2.1.18 - 2020-02-03
+
+* #46: Blacklist env var in subprocess calls to fix bug in MacOS/Homebrew installs (@irvinlim)
+* Change build versions to match supported Python versions (@sjkingo)
+
 ## 2.1.17 - 2018-11-15
 
 * #40: Fix for test cases failing (@irvinlim)
