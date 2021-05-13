@@ -28,7 +28,7 @@ Installation
 
 The latest stable release is available on `PyPi`_:
 
-::
+.. code:: bash
 
     $ pip install virtualenv-api
 
@@ -37,7 +37,7 @@ package is named ``virtualenvapi``.
 
 Alternatively, you may fetch the latest version from git:
 
-::
+.. code:: bash
 
     $ pip install git+https://github.com/sjkingo/virtualenv-api.git
 
