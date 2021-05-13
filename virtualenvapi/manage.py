@@ -133,6 +133,7 @@ class VirtualEnvironment(object):
 
     def _execute(self, args, log=True):
         """Executes the given command inside the environment and returns the output."""
+
         if not self._ready:
             self.open_or_create()
         output = ''
@@ -149,11 +150,11 @@ class VirtualEnvironment(object):
             prog = args[0]
             if prog[0] != os.sep:
                 prog = os.path.join(self.path, prog)
-            raise OSError('%s: %s' % (prog, six.u(str(e))))
+            six.raise_from(OSError('%s: %s' % (prog, six.u(str(e)))), e)
         except subprocess.CalledProcessError as e:
             output, error = e.output
             e.output = output
-            raise e
+            six.raise_from(e, e)
         finally:
             if log:
                 try:
@@ -227,7 +228,7 @@ class VirtualEnvironment(object):
         try:
             self._execute_pip(['install'] + package_args + options)
         except subprocess.CalledProcessError as e:
-            raise PackageInstallationException((e.returncode, e.output, package))
+            six.raise_from(PackageInstallationException((e.returncode, e.output, package)), e)
 
     def uninstall(self, package):
         """Uninstalls the given package (given in pip's package syntax or a tuple of
@@ -240,7 +241,7 @@ class VirtualEnvironment(object):
         try:
             self._execute_pip(['uninstall', '-y', package])
         except subprocess.CalledProcessError as e:
-            raise PackageRemovalException((e.returncode, e.output, package))
+            six.raise_from(PackageRemovalException((e.returncode, e.output, package)), e)
 
     def wheel(self, package, options=None):
         """Creates a wheel of the given package from this virtual environment,
@@ -266,7 +267,7 @@ class VirtualEnvironment(object):
         try:
             self._execute_pip(['wheel', package] + options)
         except subprocess.CalledProcessError as e:
-            raise PackageWheelException((e.returncode, e.output, package))
+            six.raise_from(PackageWheelException((e.returncode, e.output, package)), e)
 
     def is_installed(self, package):
         """Returns True if the given package (given in pip's package syntax or a
