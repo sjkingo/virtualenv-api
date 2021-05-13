@@ -6,11 +6,14 @@ import sys
 import tempfile
 import unittest
 
+from virtualenvapi import __version__, __file__ as virtualenvapi_file_path
 from virtualenvapi.manage import VirtualEnvironment
 
+virtualenvapi_module_path = os.path.dirname(os.path.dirname(virtualenvapi_file_path))
 packages_for_tests = ['pep8']
 non_lowercase_packages_for_test = ['Pillow']
-all_packages_for_tests = packages_for_tests + non_lowercase_packages_for_test
+git_packages_for_test = ['git+https://github.com/pytest-dev/pytest.git@6.2.3']
+all_packages_for_tests = packages_for_tests + non_lowercase_packages_for_test + git_packages_for_test
 
 def which(program):
     def is_exe(fpath):
@@ -80,13 +83,22 @@ class InstalledTestCase(TestBase):
             for pack in packages_for_tests:
                 self.assertTrue(self.virtual_env_obj.is_installed(pack))
 
+    def test_install_editable(self):
+        self.virtual_env_obj.install('-e git+file://{}#egg=virtualenv-api'.format(virtualenvapi_module_path))
+        print(self.virtual_env_obj.installed_packages)
+        self.assertTrue(self.virtual_env_obj.is_installed('virtualenv-api'))
+        self.assertFalse(self.virtual_env_obj.is_installed(('virtualenv-api', __version__)))
+
     def test_uninstall(self):
         self._install_packages(all_packages_for_tests)
         for pack in all_packages_for_tests:
-            if pack.endswith('.git'):
-                pack = pack.split('/')[-1].replace('.git', '')
             self.virtual_env_obj.uninstall(pack)
             self.assertFalse(self.virtual_env_obj.is_installed(pack))
+
+    def test_uninstall_editable(self):
+        self.virtual_env_obj.install('-e git+file://{}#egg=virtualenv-api'.format(virtualenvapi_module_path))
+        self.assertFalse(self.virtual_env_obj.is_installed('virtualenv-api'))
+        self.assertFalse(self.virtual_env_obj.is_installed(('virtualenv-api', __version__)))
 
     def test_wheel(self):
         self.virtual_env_obj.install('wheel') # required for this test
