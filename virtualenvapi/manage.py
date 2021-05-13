@@ -58,14 +58,13 @@ class VirtualEnvironment(object):
         # Windows virtualenv installation installs pip to the [Ss]cripts
         # folder. Here's a simple check to support:
         if sys.platform == 'win32':
-            return os.path.join('Scripts', 'python.exe')
-        return os.path.join('bin', 'python')
+            return os.path.join(self.path, 'Scripts', 'python.exe')
+        return os.path.join(self.path, 'bin', 'python')
 
     @property
     def pip_version(self):
         """Version of installed pip."""
-        if not self._pip_exists:
-            return None
+
         if not hasattr(self, '_pip_version'):
             # don't call `self._execute_pip` here as that method calls this one
             output = self._execute(self._pip + ['-V'], log=False).split()[1]
