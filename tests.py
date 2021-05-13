@@ -96,26 +96,6 @@ class InstalledTestCase(TestBase):
             self.assertTrue(self.virtual_env_obj.is_installed(pack))
 
 
-class SearchTestCase(TestBase):
-    """
-    Test pip search.
-    """
-
-    def test_search(self):
-        for pack in all_packages_for_tests:
-            result = self.virtual_env_obj.search(pack)
-            self.assertIsInstance(result, dict)
-            self.assertTrue(bool(result))
-            if result:
-                self.assertIn(pack.lower(), [k.split(' (')[0].lower() for k in result.keys()])
-
-    def test_search_names(self):
-        for pack in all_packages_for_tests:
-            result = self.virtual_env_obj.search_names(pack)
-            self.assertIsInstance(result, list)
-            self.assertIn(pack.lower(), [k.split(' (')[0].lower() for k in result])
-
-
 class PythonArgumentTestCase(TestBase):
     """
     Test passing a different interpreter path to `VirtualEnvironment` (`virtualenv -p`).
