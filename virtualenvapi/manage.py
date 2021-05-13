@@ -78,11 +78,6 @@ class VirtualEnvironment(object):
         return os.path.split(self.path)[0]
 
     @property
-    def name(self):
-        """The name of this virtual environment (taken from its path)."""
-        return os.path.basename(self.path)
-
-    @property
     def _logfile(self):
         """Absolute path of the log file for recording installation output."""
         return os.path.join(self.path, 'build.log')
@@ -92,22 +87,28 @@ class VirtualEnvironment(object):
         """Absolute path of the log file for recording installation errors."""
         return os.path.join(self.path, 'build.err')
 
+    @property
+    def _virtualenv(self):
+        """The arguments used to call virtualenv."""
+
+        return [sys.executable, '-m', 'virtualenv']
+
     def _create(self):
         """Executes `virtualenv` to create a new environment."""
         if self.readonly:
             raise VirtualenvReadonlyException()
-        args = ['virtualenv']
+
+        args = []
         if self.system_site_packages:
             args.append('--system-site-packages')
-        if self.python is None:
-            args.append(self.name)
-        else:
-            args.extend(['-p', self.python, self.name])
-        proc = subprocess.Popen(args, cwd=self.root, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if self.python is not None:
+            args.extend(['-p', self.python])
+
+        proc = subprocess.Popen(self._virtualenv + args + [self.path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, error = proc.communicate()
         returncode = proc.returncode
         if returncode:
-            raise VirtualenvCreationException((returncode, output, self.name))
+            raise VirtualenvCreationException((returncode, output, self.path))
         self._write_to_log(output, truncate=True)
         self._write_to_error(error, truncate=True)
 
