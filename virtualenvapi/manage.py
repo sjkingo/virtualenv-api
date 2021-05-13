@@ -283,6 +283,21 @@ class VirtualEnvironment(object):
         else:
             return pkg_tuple[0].lower() in self.installed_package_names
 
+    def is_accessible(self, package):
+        """Returns True if the given package (given in pip's package syntax or a
+        tuple of ('name', 'ver')) is accessible in the virtual environment."""
+        if isinstance(package, tuple):
+            package = '=='.join(package)
+        if package.endswith('.git'):
+            pkg_name = os.path.split(package)[1][:-4]
+            return pkg_name in self.all_package_names or \
+                    pkg_name.replace('_', '-') in self.all_package_names
+        pkg_tuple = split_package_name(package)
+        if pkg_tuple[1] is not None:
+            return pkg_tuple in self.all_packages
+        else:
+            return pkg_tuple[0].lower() in self.all_package_names
+
     def upgrade(self, package, force=False):
         """Shortcut method to upgrade a package. If `force` is set to True,
         the package and all of its dependencies will be reinstalled, otherwise
@@ -333,6 +348,22 @@ class VirtualEnvironment(object):
                 ['freeze'] + freeze_options).split(linesep))))
 
     @property
+    def all_packages(self):
+        """
+        List of all packages accessible in this environment in
+        the format [(name, ver), ..].
+        """
+
+        freeze_options = ['--all'] if self.pip_version >= (8, 1, 0) else []
+        return list(map(split_package_name, filter(None, self._execute_pip(
+                ['freeze'] + freeze_options).split(linesep))))
+    @property
     def installed_package_names(self):
         """List of all package names that are installed in this environment."""
         return [name.lower() for name, _ in self.installed_packages]
+
+    @property
+    def all_package_names(self):
+        """List of all package names that are accessible in this environment."""
+
+        return [name.lower() for name, _ in self.all_packages]

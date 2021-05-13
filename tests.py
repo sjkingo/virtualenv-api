@@ -149,13 +149,6 @@ class SystemSitePackagesTest(unittest.TestCase):
         snapshot system package list
         """
         self.dir = tempfile.mkdtemp()
-        self.no_global = (
-            "lib/python{}.{}"
-            "/no-global-site-packages.txt"
-        ).format(
-            sys.version_info.major,
-            sys.version_info.minor
-        )
 
     def tearDown(self):
         if os.path.exists(self.dir):
@@ -164,30 +157,50 @@ class SystemSitePackagesTest(unittest.TestCase):
     def test_system_site_packages(self):
         """
         test that creating a venv with system_site_packages=True
-        results in a venv that does not contain the no-global-site-packages file
-
+        results in a venv that does not have system packages installed
         """
+
         venv = VirtualEnvironment(self.dir, system_site_packages=True)
-        venv._create()
-        expected = os.path.join(venv.path, self.no_global)
-        self.assertTrue(
-            not os.path.exists(expected)
-        )
+        venv.open_or_create()
+
+        # always installed and accessible
+        self.assertTrue(venv.is_installed("pip"))
+        self.assertTrue(venv.is_installed("wheel"))
+        self.assertTrue(venv.is_installed("setuptools"))
+        self.assertTrue(venv.is_accessible("pip"))
+        self.assertTrue(venv.is_accessible("wheel"))
+        self.assertTrue(venv.is_accessible("setuptools"))
+
+        # system packages are not listed with -l option
+        self.assertFalse(venv.is_installed("six"))
+        self.assertFalse(venv.is_installed("virtualenv"))
+
+        # but they are accessible
+        self.assertTrue(venv.is_accessible("six"))
+        self.assertTrue(venv.is_accessible("virtualenv"))
 
     def test_no_system_site_packages(self):
         """
         test that creating a venv with system_site_packages=False
-        results in a venv that contains the no-global-site-packages
-        file
-
+        results in a venv that does not have system packages installed
         """
-        venv = VirtualEnvironment(self.dir)
-        venv._create()
-        expected = os.path.join(venv.path, self.no_global)
-        self.assertTrue(
-            os.path.exists(expected)
-        )
 
+        venv = VirtualEnvironment(self.dir)
+        venv.open_or_create()
+
+        # always installed and accessible
+        self.assertTrue(venv.is_installed("pip"))
+        self.assertTrue(venv.is_installed("wheel"))
+        self.assertTrue(venv.is_installed("setuptools"))
+        self.assertTrue(venv.is_accessible("pip"))
+        self.assertTrue(venv.is_accessible("wheel"))
+        self.assertTrue(venv.is_accessible("setuptools"))
+
+        # system packages are not accessible
+        self.assertFalse(venv.is_installed("six"))
+        self.assertFalse(venv.is_installed("virtualenv"))
+        self.assertFalse(venv.is_accessible("six"))
+        self.assertFalse(venv.is_accessible("virtualenv"))
 
 if __name__ == '__main__':
     unittest.main()
