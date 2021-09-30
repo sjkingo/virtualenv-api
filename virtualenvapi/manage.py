@@ -329,8 +329,11 @@ class VirtualEnvironment(object):
         the format [(name, ver), ..].
         """
         freeze_options = ['-l', '--all'] if self.pip_version >= (8, 1, 0) else ['-l']
-        return list(map(split_package_name, filter(None, self._execute_pip(
-                ['freeze'] + freeze_options).split(linesep))))
+        filtered = self._execute_pip(['freeze'] + freeze_options).split(linesep)
+        filtered = filter(None, filtered)
+        # Remove any comments in the `pip freeze` output
+        filtered = filter(lambda s: not s.startswith('#'), filtered)
+        return list(map(split_package_name, filtered))
 
     @property
     def installed_package_names(self):
