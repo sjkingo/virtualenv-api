@@ -123,7 +123,7 @@ class PythonArgumentTestCase(TestBase):
 
     def setUp(self):
         self.env_path = tempfile.mkdtemp()
-        self.python = which('python')
+        self.python = sys.executable
         self.assertIsNotNone(self.python)
         self.virtual_env_obj = VirtualEnvironment(self.env_path, python=self.python)
 
